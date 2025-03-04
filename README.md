@@ -6,7 +6,7 @@
 
 **A short one-liner describing what your project does.**
 
-Example: *A landlord-tenant communication platform for managing rental issues efficiently.*
+An app that helps track food expiry dates, cut waste, and prevent overbuying
 
 **Live Demo:** [Your App Link](https://your-app.com/) *(if available)*
 
@@ -27,38 +27,25 @@ Example: *A landlord-tenant communication platform for managing rental issues ef
 
 ## Problem Statement
 
-- What problem does this app solve?
-- Who is the target user?
-
-Example:
-
-> Renting a property can be stressful due to unclear communication. Many landlords and tenants rely on emails or texts, leading to misunderstandings, lost documents, and disputes.
-> 
+One-third of all food globally is wasted, with the UK discarding 9.52 million tonnes annually—70% from households. This waste could feed 30 million people, yet 8.4 million face food poverty, costing households £470 yearly.  
 
 ---
 
 ## Solution
 
-- What does your app do to solve this?
-
-Example:
-
-> LetChat provides a secure platform where landlords and tenants can chat, track maintenance tickets, and upload documents—all in one place.
-> 
-
----
+Our app helps reduce waste by keeping users informed on when their food will expire which also has the benefit of preventing users over-buying, thus reducing food waste.
 
 ## Tech Stack
 
- **Frontend:** Next.js, TypeScript, Tailwind CSS
+ **Frontend:** Next.js, TypeScript, CSS modules
 
  **Backend:** Node.js, Express, PostgreSQL
 
-**Authentication:** Firebase
+**Authentication:** Clerk
 
-**Testing:** Jest, Cypress
+**Testing:** Vitest (unit testing), Playwright (end-to-end testing)
 
-**Deployment:** Netlify (Frontend), Render (Backend)
+**Deployment:** Netlify (Frontend), Supabase (Backend)
 
 ---
 
@@ -136,7 +123,7 @@ Example:
 | Louis | Backend / Database & Frontend Animations | [@Louis](https://github.com/L-Brookling) |
 | Holly | ... | [@Holly](https://github.com/Holl4444) |
 | Danielle | ... | [@Dani](https://github.com/daniellem62) |
-| Nasrin | ... | [@Nas](https://github.com/Nas1010) |
+| Nasrin | DevOps/ Backend & Frontend | [@Nas](https://github.com/Nas1010) |
 | Owen | ... | [@Owen](https://github.com/Oweshbin) |
 | Sam | ... | [@Sam](https://github.com/samannetts8) |
 
@@ -146,7 +133,5 @@ Example:
 
 - **What impact does your project have in the real world?**
 
-Example:
+> Our app helps reduce food waste by reminding users of expiry dates, preventing unnecessary purchases, and encouraging mindful consumption. By cutting household waste, it not only saves users money but also supports the fight against food poverty and reduces environmental impact.
 
-> LetChat improves landlord-tenant communication by reducing disputes and lost documents. This helps create better rental experiences and smoother property management.
->
