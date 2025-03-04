@@ -1,6 +1,8 @@
 # SoC BC18: Final Hackathon project
 
 ### ShelfLife
+![logoPlaceholder](https://github.com/user-attachments/assets/31b6917e-0fb8-400f-89ba-b8cea445d989)
+
 
 **A short one-liner describing what your project does.**
 
