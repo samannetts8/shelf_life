@@ -5,15 +5,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Logo } from "./components/logo";
 import { Button } from "./components/ui/button";
-import { LoginModal } from "./components/login-modal";
-import { SignupModal } from "./components/signup-modal";
+
 import SupabaseTestPage from "./supatest";
 import styles from "./page.module.css";
 import LoginPage from "./login/page";
 
 export default function Home() {
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showSignupModal, setShowSignupModal] = useState(false);
+ 
   const router = useRouter();
 
   const handleSuccess = () => {
