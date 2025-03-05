@@ -23,26 +23,8 @@ export default function Home() {
     <div className={styles.container}>
       <div className={styles.content}>
         <Logo className={styles.logo} />
-        <h1 className={styles.title}>FreshTrack</h1>
+        <h1 className={styles.title}>Shelf Life</h1>
         <p className={styles.subtitle}>Reduce food waste, save money</p>
-
-        <div className={styles.buttonContainer}>
-          <Button
-            onClick={() => setShowLoginModal(true)}
-            className={styles.loginButton}
-          >
-            Login
-          </Button>
-
-          <Button
-            onClick={() => setShowSignupModal(true)}
-            variant="outline"
-            className={styles.signupButton}
-          >
-            Sign Up
-          </Button>
-          
-        </div>
 
         <p className={styles.footer}>
           Track your food expiration dates and get recipe suggestions to reduce
