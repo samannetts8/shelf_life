@@ -1,13 +1,16 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as ToastPrimitives from "@radix-ui/react-toast"
-import { cva, type VariantProps } from "class-variance-authority"
-import { X } from "lucide-react"
+import * as React from "react";
+import * as ToastPrimitives from "@radix-ui/react-toast";
+import { X } from "lucide-react";
+import styles from "./toast.module.css";
 
-import { cn } from "@/lib/utils"
+// Helper function to join class names
+const cn = (...classNames: (string | undefined)[]) => {
+  return classNames.filter(Boolean).join(" ");
+};
 
-const ToastProvider = ToastPrimitives.Provider
+const ToastProvider = ToastPrimitives.Provider;
 
 const ToastViewport = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Viewport>,
@@ -15,37 +18,34 @@ const ToastViewport = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Viewport
     ref={ref}
-    className={cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
-      className,
-    )}
+    className={cn(styles.viewport, className)}
     {...props}
   />
-))
-ToastViewport.displayName = ToastPrimitives.Viewport.displayName
+));
+ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
 
-const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
-  {
-    variants: {
-      variant: {
-        default: "border bg-background text-foreground",
-        destructive: "destructive group border-destructive bg-destructive text-destructive-foreground",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  },
-)
+// Get variant class based on variant prop
+const getVariantClass = (variant: "default" | "destructive" = "default") => {
+  return variant === "default"
+    ? styles.variantDefault
+    : styles.variantDestructive;
+};
 
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> & VariantProps<typeof toastVariants>
->(({ className, variant, ...props }, ref) => {
-  return <ToastPrimitives.Root ref={ref} className={cn(toastVariants({ variant }), className)} {...props} />
-})
-Toast.displayName = ToastPrimitives.Root.displayName
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> & {
+    variant?: "default" | "destructive";
+  }
+>(({ className, variant = "default", ...props }, ref) => {
+  return (
+    <ToastPrimitives.Root
+      ref={ref}
+      className={cn(styles.toast, getVariantClass(variant), className)}
+      {...props}
+    />
+  );
+});
+Toast.displayName = ToastPrimitives.Root.displayName;
 
 const ToastAction = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Action>,
@@ -53,14 +53,11 @@ const ToastAction = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Action
     ref={ref}
-    className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive",
-      className,
-    )}
+    className={cn(styles.action, className)}
     {...props}
   />
-))
-ToastAction.displayName = ToastPrimitives.Action.displayName
+));
+ToastAction.displayName = ToastPrimitives.Action.displayName;
 
 const ToastClose = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Close>,
@@ -68,105 +65,129 @@ const ToastClose = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Close
     ref={ref}
-    className={cn(
-      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
-      className,
-    )}
+    className={cn(styles.close, className)}
     toast-close=""
     {...props}
   >
     <X className="h-4 w-4" />
   </ToastPrimitives.Close>
-))
-ToastClose.displayName = ToastPrimitives.Close.displayName
+));
+ToastClose.displayName = ToastPrimitives.Close.displayName;
 
 const ToastTitle = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Title>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
 >(({ className, ...props }, ref) => (
-  <ToastPrimitives.Title ref={ref} className={cn("text-sm font-semibold", className)} {...props} />
-))
-ToastTitle.displayName = ToastPrimitives.Title.displayName
+  <ToastPrimitives.Title
+    ref={ref}
+    className={cn(styles.title, className)}
+    {...props}
+  />
+));
+ToastTitle.displayName = ToastPrimitives.Title.displayName;
 
 const ToastDescription = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Description>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
 >(({ className, ...props }, ref) => (
-  <ToastPrimitives.Description ref={ref} className={cn("text-sm opacity-90", className)} {...props} />
-))
-ToastDescription.displayName = ToastPrimitives.Description.displayName
+  <ToastPrimitives.Description
+    ref={ref}
+    className={cn(styles.description, className)}
+    {...props}
+  />
+));
+ToastDescription.displayName = ToastPrimitives.Description.displayName;
 
-type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>
+type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
 
-type ToastActionElement = React.ReactElement<typeof ToastAction>
+type ToastActionElement = React.ReactElement<typeof ToastAction>;
 
 interface ToastNotificationProps {
-  title: string
-  description?: string
-  type?: "success" | "error" | "info"
-  open: boolean
-  onClose: () => void
+  title: string;
+  description?: string;
+  type?: "success" | "error" | "info";
+  open: boolean;
+  onClose: () => void;
 }
 
-export function ToastNotification({ title, description, type = "info", open, onClose }: ToastNotificationProps) {
-  const [isVisible, setIsVisible] = React.useState(false)
+export function ToastNotification({
+  title,
+  description,
+  type = "info",
+  open,
+  onClose,
+}: ToastNotificationProps) {
+  const [isVisible, setIsVisible] = React.useState(false);
 
   React.useEffect(() => {
     if (open) {
-      setIsVisible(true)
+      setIsVisible(true);
       const timer = setTimeout(() => {
-        setIsVisible(false)
-        setTimeout(onClose, 300) // Wait for animation to complete
-      }, 5000)
-      return () => clearTimeout(timer)
+        setIsVisible(false);
+        setTimeout(onClose, 300); // Wait for animation to complete
+      }, 5000);
+      return () => clearTimeout(timer);
     }
-  }, [open, onClose])
+  }, [open, onClose]);
 
-  if (!open) return null
+  if (!open) return null;
 
-  const typeStyles = {
-    success: "bg-green-50 border-green-200",
-    error: "bg-red-50 border-red-200",
-    info: "bg-blue-50 border-blue-200",
-  }
+  const getNotificationTypeClass = () => {
+    switch (type) {
+      case "success":
+        return styles.notificationSuccess;
+      case "error":
+        return styles.notificationError;
+      case "info":
+      default:
+        return styles.notificationInfo;
+    }
+  };
 
-  const iconStyles = {
-    success: "text-green-500",
-    error: "text-red-500",
-    info: "text-blue-500",
-  }
+  const getNotificationCloseClass = () => {
+    switch (type) {
+      case "success":
+        return styles.notificationCloseSuccess;
+      case "error":
+        return styles.notificationCloseError;
+      case "info":
+      default:
+        return styles.notificationCloseInfo;
+    }
+  };
 
   return (
     <div
       className={cn(
-        "fixed bottom-4 right-4 z-50 max-w-md rounded-lg border p-4 shadow-md transition-all duration-300",
-        typeStyles[type],
-        isVisible ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0",
+        styles.notification,
+        getNotificationTypeClass(),
+        isVisible ? styles.notificationVisible : styles.notificationHidden
       )}
     >
-      <div className="flex items-start">
-        <div className="flex-1">
-          <h3 className="font-medium">{title}</h3>
-          {description && <p className="text-sm mt-1">{description}</p>}
+      <div className={styles.notificationContent}>
+        <div className={styles.notificationBody}>
+          <h3 className={styles.notificationTitle}>{title}</h3>
+          {description && (
+            <p className={styles.notificationDescription}>{description}</p>
+          )}
         </div>
         <button
           onClick={() => {
-            setIsVisible(false)
-            setTimeout(onClose, 300)
+            setIsVisible(false);
+            setTimeout(onClose, 300);
           }}
-          className={cn("ml-4 rounded-full p-1", iconStyles[type])}
+          className={getNotificationCloseClass()}
         >
           <X className="h-4 w-4" />
         </button>
       </div>
     </div>
-  )
+  );
 }
 
 export {
-  type,
-  ToastProps,
-  ToastActionElement,
+  type ToastProps,
+  type ToastActionElement,
   ToastProvider,
   ToastViewport,
   Toast,
@@ -174,4 +195,4 @@ export {
   ToastDescription,
   ToastClose,
   ToastAction,
-}
+};

@@ -1,11 +1,11 @@
 import { v4 as uuidv4 } from "uuid"
-import type { FoodItemType } from "@/types/food-item"
+import type { FoodItemType } from "../types/food-item"
 
 // Get current date
 const today = new Date()
 
 // Sample food items with different expiration dates
-export const foodItems: FoodItemType[] = [
+export const FoodItem: FoodItemType[] = [
   {
     id: uuidv4(),
     name: "Milk",

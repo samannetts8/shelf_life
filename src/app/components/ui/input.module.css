@@ -1,0 +1,28 @@
+.input {
+  display: flex;
+  height: 2.5rem;
+  width: 100%;
+  border-radius: 0.375rem;
+  border: 1px solid var(--input-border-color, #e5e7eb);
+  background-color: var(--background-color, transparent);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: var(--text-color, #111827);
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ring-color, #0ea5e9);
+  border-color: var(--ring-color, #0ea5e9);
+}
+
+.input:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.input::placeholder {
+  color: var(--muted-text-color, #9ca3af);
+}

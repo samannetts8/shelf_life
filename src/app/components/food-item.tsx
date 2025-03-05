@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
-import type { FoodItemType } from "@/types/food-item";
-import { getCategoryIcon } from "@/utils/category-icons";
+import type { FoodItemType } from "../types/food-item";
+import { getCategoryIcon } from "../utils/category-icons";
 import styles from "./food-item.module.css";
 
 interface FoodItemProps {

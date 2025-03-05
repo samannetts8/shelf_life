@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
-import { LoginForm } from "@/components/login-form";
+import { LoginForm } from "./login-form";
 import styles from "./signup-modal.module.css";
 
 interface SignupModalProps {

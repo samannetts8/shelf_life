@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FoodItem } from "@/components/food-item";
-import { EmptyState } from "@/components/empty-state";
-import { foodItems as initialFoodItems } from "@/data/food-items";
-import type { FoodItemType } from "@/types/food-item";
+import { FoodItem as FoodItemComponent } from "../components/food-item";
+import { FoodItem } from "../components/food-item";
+import { EmptyState } from "../components/empty-state";
+import { FoodItem as initialFoodItems } from "../data/food-items";
+import type { FoodItemType } from "../types/food-item";
 import styles from "./fridge.module.css";
 
 export function Fridge() {
@@ -88,7 +89,7 @@ export function Fridge() {
           </h2>
           <div className={styles.itemsContainer}>
             {expiringSoon.map((item) => (
-              <FoodItem
+              <FoodItemComponent
                 key={item.id}
                 item={item}
                 onConsume={markAsConsumed}
