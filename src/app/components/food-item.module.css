@@ -1,0 +1,71 @@
+.container {
+  display: flex;
+  align-items: center;
+  border-radius: 0.5rem;
+  border-width: 1px;
+  padding: 0.75rem;
+}
+
+.goodStatus {
+  background-color: #dcfce7; /* green-100 */
+  border-color: #bbf7d0; /* green-200 */
+}
+
+.expiringStatus {
+  background-color: #ffedd5; /* orange-100 */
+  border-color: #fed7aa; /* orange-200 */
+}
+
+.expiredStatus {
+  background-color: #fee2e2; /* red-100 */
+  border-color: #fecaca; /* red-200 */
+}
+
+.iconContainer {
+  flex-shrink: 0;
+  margin-right: 0.75rem;
+  background-color: white;
+  padding: 0.5rem;
+  border-radius: 9999px;
+}
+
+.icon {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: #4b5563; /* text-gray-600 */
+}
+
+.content {
+  flex-grow: 1;
+}
+
+.itemName {
+  font-weight: 500;
+}
+
+.expiryText {
+  font-size: 0.875rem;
+  color: #4b5563; /* text-gray-600 */
+}
+
+.quantityText {
+  font-size: 0.75rem;
+  color: #6b7280; /* text-gray-500 */
+}
+
+.consumeButton {
+  margin-left: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 9999px;
+  background-color: white;
+  color: #16a34a; /* text-green-600 */
+}
+
+.consumeButton:hover {
+  background-color: #f0fdf4; /* bg-green-50 */
+}
+
+.checkIcon {
+  height: 1.25rem;
+  width: 1.25rem;
+}
