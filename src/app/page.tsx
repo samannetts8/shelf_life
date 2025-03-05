@@ -1,95 +1,53 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Logo } from "./components/logo"
+import { Button } from "./components/ui/button"
+import { LoginModal } from "./components/login-modal"
+import { SignupModal } from "./components/signup-modal"
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [showSignupModal, setShowSignupModal] = useState(false)
+  const router = useRouter()
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const handleSuccess = () => {
+    router.push("/dashboard")
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100 flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md text-center">
+        <Logo className="h-24 w-24 mx-auto mb-6" />
+        <h1 className="text-4xl font-bold text-green-800 mb-2">FreshTrack</h1>
+        <p className="text-green-600 text-lg mb-8">Reduce food waste, save money</p>
+
+        <div className="space-y-4">
+          <Button
+            onClick={() => setShowLoginModal(true)}
+            className="w-full bg-green-600 hover:bg-green-700 py-6 text-lg"
           >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
+            Login
+          </Button>
+
+          <Button
+            onClick={() => setShowSignupModal(true)}
+            variant="outline"
+            className="w-full border-green-600 text-green-600 hover:bg-green-50 py-6 text-lg"
           >
-            Read our docs
-          </a>
+            Sign Up
+          </Button>
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <p className="text-sm text-gray-600 mt-8">
+          Track your food expiration dates and get recipe suggestions to reduce waste
+        </p>
+      </div>
+
+      {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} onSuccess={handleSuccess} />}
+
+      {showSignupModal && <SignupModal onClose={() => setShowSignupModal(false)} onSuccess={handleSuccess} />}
     </div>
-  );
+  )
 }
