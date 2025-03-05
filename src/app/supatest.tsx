@@ -1,9 +1,9 @@
-'use client';
-import { useState, useEffect } from 'react';
-import supabase from '@/app/lib/supabase';
+"use client";
+import { useState, useEffect } from "react";
+import supabase from "./lib/supabase";
 
 export default function SupabaseTestPage() {
-  const [status, setStatus] = useState('Loading...');
+  const [status, setStatus] = useState("Loading...");
   const [error, setError] = useState<string | null>(null);
   const [details, setDetails] = useState<string | null>(null);
 
@@ -12,52 +12,50 @@ export default function SupabaseTestPage() {
       try {
         // Log the URL we're trying to connect to (without the key)
         console.log(
-          'Attempting to connect to:',
+          "Attempting to connect to:",
           process.env.NEXT_PUBLIC_SUPABASE_URL
         );
 
         // Test if the client was initialized properly
         if (!supabase) {
-          throw new Error('Supabase client is undefined');
+          throw new Error("Supabase client is undefined");
         }
 
         // Simple query to test connection and get first row
         const firstRowQuery = await supabase
-          .from('TestTable')
-          .select('*')
+          .from("TestTable")
+          .select("*")
           .limit(1);
 
         if (firstRowQuery.error) throw firstRowQuery.error;
 
         // Use the count query as you already have
         const countQuery = await supabase
-          .from('TestTable')
-          .select('count', { count: 'exact' });
+          .from("TestTable")
+          .select("count", { count: "exact" });
 
         if (countQuery.error) throw countQuery.error;
 
         setStatus(
-          `Connected! Count: ${JSON.stringify(
-            countQuery.data
-          )}, First Row: ${
+          `Connected! Count: ${JSON.stringify(countQuery.data)}, First Row: ${
             firstRowQuery.data && firstRowQuery.data.length > 0
               ? JSON.stringify(firstRowQuery.data[0])
-              : 'No data found'
+              : "No data found"
           }`
         );
       } catch (err) {
-        console.error('Connection test failed:', err);
+        console.error("Connection test failed:", err);
 
         // More detailed error reporting
         if (err instanceof Error) {
           setError(err.message);
-          setDetails(err.stack || 'No stack trace available');
+          setDetails(err.stack || "No stack trace available");
         } else {
-          setError('Unknown error type');
+          setError("Unknown error type");
           setDetails(JSON.stringify(err));
         }
 
-        setStatus('Failed to connect');
+        setStatus("Failed to connect");
       }
     }
 
@@ -66,9 +64,7 @@ export default function SupabaseTestPage() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">
-        Supabase Connection Test
-      </h1>
+      <h1 className="text-2xl font-bold mb-6">Supabase Connection Test</h1>
       <div className="p-4 border rounded-md bg-gray-50">
         <p className="font-semibold">Status: {status}</p>
         {error && (
@@ -84,13 +80,11 @@ export default function SupabaseTestPage() {
       </div>
 
       <div className="mt-6">
-        <h2 className="text-xl font-bold mb-2">
-          Troubleshooting Steps:
-        </h2>
+        <h2 className="text-xl font-bold mb-2">Troubleshooting Steps:</h2>
         <ol className="list-decimal pl-6 space-y-2">
           <li>
-            Check if your Supabase URL and Anon Key are set correctly
-            in .env.local
+            Check if your Supabase URL and Anon Key are set correctly in
+            .env.local
           </li>
           <li>
             {`Verify that the 'fridge_items' table exists in your
