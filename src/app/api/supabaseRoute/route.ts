@@ -5,7 +5,7 @@ export async function GET() {
   try {
     // Query all items without user filtering
     const { data, error } = await supabase
-      .from('fridge_items')
+      .from('TestTable')
       .select('*')
       .order('expiry_date', { ascending: true });
 
