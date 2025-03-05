@@ -1,19 +1,19 @@
-"use client";
+"use client"
 
-import type React from "react";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { v4 as uuidv4 } from "uuid";
-import { MobileLayout } from "../components/mobile-layout";
-import type { FoodItemType } from "../types/food-item";
-import { foodCategories } from "../data/food-categories";
-import { getCategoryIcon } from "../utils/category-icons";
-import { useAuth } from "../hooks/use-auth";
-import "./add-item.css"; // Import the new CSS file
+import type React from "react"
+import {useState, useEffect} from "react"
+import {useRouter} from "next/navigation"
+import {v4 as uuidv4} from "uuid"
+import {MobileLayout} from "../components/Mobile-layout"
+import type {FoodItemType} from "../types/food-item"
+import {foodCategories} from "../data/food-categories"
+import {getCategoryIcon} from "../utils/category-icons"
+import {useAuth} from "../hooks/use-auth"
+import "./add-item.css" // Import the new CSS file
 
 export default function AddItem() {
-  const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const router = useRouter()
+  const {user, isLoading} = useAuth()
   const [formData, setFormData] = useState({
     name: "",
     category: "dairy",
@@ -22,49 +22,49 @@ export default function AddItem() {
     expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
       .toISOString()
       .split("T")[0],
-  });
+  })
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push("/");
+      router.push("/")
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading, router])
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+    const {name, value} = e.target
+    setFormData((prev) => ({...prev, [name]: value}))
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     const newItem: FoodItemType = {
       id: uuidv4(),
       ...formData,
       addedDate: new Date().toISOString(),
-    };
+    }
 
-    const existingItems = JSON.parse(localStorage.getItem("foodItems") || "[]");
-    const updatedItems = [...existingItems, newItem];
-    localStorage.setItem("foodItems", JSON.stringify(updatedItems));
+    const existingItems = JSON.parse(localStorage.getItem("foodItems") || "[]")
+    const updatedItems = [...existingItems, newItem]
+    localStorage.setItem("foodItems", JSON.stringify(updatedItems))
 
-    router.push("/dashboard");
-  };
+    router.push("/dashboard")
+  }
 
   if (isLoading) {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
       </div>
-    );
+    )
   }
 
   if (!user) {
-    return null;
+    return null
   }
 
   return (
@@ -90,8 +90,8 @@ export default function AddItem() {
             <label htmlFor="category">Category</label>
             <div className="category-grid">
               {foodCategories.map((category) => {
-                const CategoryIcon = getCategoryIcon(category.value);
-                const isSelected = formData.category === category.value;
+                const CategoryIcon = getCategoryIcon(category.value)
+                const isSelected = formData.category === category.value
                 return (
                   <button
                     key={category.value}
@@ -106,12 +106,20 @@ export default function AddItem() {
                       isSelected ? "selected" : ""
                     }`}
                   >
-                    <CategoryIcon className={`category-icon ${isSelected ? "selected-icon" : ""}`} />
-                    <span className={`category-label ${isSelected ? "selected-label" : ""}`}>
+                    <CategoryIcon
+                      className={`category-icon ${
+                        isSelected ? "selected-icon" : ""
+                      }`}
+                    />
+                    <span
+                      className={`category-label ${
+                        isSelected ? "selected-label" : ""
+                      }`}
+                    >
                       {category.label}
                     </span>
                   </button>
-                );
+                )
               })}
             </div>
           </div>
@@ -133,7 +141,12 @@ export default function AddItem() {
 
             <div className="form-group">
               <label htmlFor="unit">Unit</label>
-              <select id="unit" name="unit" value={formData.unit} onChange={handleChange}>
+              <select
+                id="unit"
+                name="unit"
+                value={formData.unit}
+                onChange={handleChange}
+              >
                 <option value="item">Item(s)</option>
                 <option value="g">Grams</option>
                 <option value="kg">Kilograms</option>
@@ -164,5 +177,5 @@ export default function AddItem() {
         </form>
       </div>
     </MobileLayout>
-  );
+  )
 }

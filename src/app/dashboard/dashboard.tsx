@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Fridge } from "../components/fridge"
-import { MobileLayout } from "../components/mobile-layout"
-import { useAuth } from "../hooks/use-auth"
+import {useEffect} from "react"
+import {useRouter} from "next/navigation"
+import {Fridge} from "../components/fridge"
+import {MobileLayout} from "../components/Mobile-layout"
+import {useAuth} from "../hooks/use-auth"
 
 export default function Dashboard() {
-  const { user, isLoading } = useAuth()
+  const {user, isLoading} = useAuth()
   const router = useRouter()
 
   useEffect(() => {

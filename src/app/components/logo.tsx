@@ -1,14 +1,14 @@
-import { Leaf } from "lucide-react"
+import { Leaf } from "lucide-react";
+import styles from "./Logo.module.css";
 
 interface LogoProps {
-  className?: string
+  className?: string;
 }
 
 export function Logo({ className }: LogoProps) {
   return (
-    <div className={`bg-green-600 text-white p-4 rounded-full ${className}`}>
+    <div className={`${styles.logoContainer} ${className || ""}`}>
       <Leaf className="h-full w-full" />
     </div>
-  )
+  );
 }
-
