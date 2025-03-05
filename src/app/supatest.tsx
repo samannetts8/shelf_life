@@ -24,7 +24,7 @@ export default function SupabaseTestPage() {
         // Simple query to test connection and get first row
         const firstRowQuery = await supabase
           .from("TestTable")
-          .select("*")
+          .select("id, name, expiry_date, quantity")
           .limit(1);
 
         if (firstRowQuery.error) throw firstRowQuery.error;
@@ -77,29 +77,6 @@ export default function SupabaseTestPage() {
             )}
           </div>
         )}
-      </div>
-
-      <div className="mt-6">
-        <h2 className="text-xl font-bold mb-2">Troubleshooting Steps:</h2>
-        <ol className="list-decimal pl-6 space-y-2">
-          <li>
-            Check if your Supabase URL and Anon Key are set correctly in
-            .env.local
-          </li>
-          <li>
-            {`Verify that the 'fridge_items' table exists in your
-            Supabase database`}
-          </li>
-          <li>
-            {`Make sure you've enabled Row Level Security and created
-            appropriate policies`}
-          </li>
-          <li>{`Check browser console for additional error messages`}</li>
-          <li>
-            {`Restart your Next.js development server after making
-            changes to .env files`}
-          </li>
-        </ol>
       </div>
     </div>
   );
