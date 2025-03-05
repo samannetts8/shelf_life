@@ -15,14 +15,18 @@ export async function login(formData: FormData) {
     password: formData.get("password") as string,
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { error, data: userData } = await supabase.auth.signInWithPassword(
+    data
+  );
 
   if (error) {
-    redirect("/error");
+    // Return the error instead of redirecting
+    return { error: error.message };
   }
 
   revalidatePath("/", "layout");
-  redirect("/");
+  revalidatePath("/dashboard", "layout");
+  redirect("/dashboard"); // Redirect to dashboard instead of homepage
 }
 
 export async function signup(formData: FormData) {
