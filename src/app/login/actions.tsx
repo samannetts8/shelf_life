@@ -18,7 +18,7 @@ export async function login(formData: FormData) {
   const { error, data: userData } = await supabase.auth.signInWithPassword(
     data
   );
-
+  console.log(`Error message: ${JSON.stringify(error)}`);
   if (error) {
     // Return the error instead of redirecting
     return { error: error.message };
@@ -40,7 +40,7 @@ export async function signup(formData: FormData) {
   };
 
   const { error } = await supabase.auth.signUp(data);
-
+  console.log(`Error message 2: ${JSON.stringify(error)}`);
   if (error) {
     redirect("/error");
   }
