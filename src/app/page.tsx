@@ -1,77 +1,69 @@
+"use client";
 
-"use client"
-
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Logo } from "./components/logo"
-import { Button } from "./components/ui/button"
-import { LoginModal } from "./components/login-modal"
-import { SignupModal } from "./components/signup-modal"
-
-import Image from "next/image";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Logo } from "./components/logo";
+import { Button } from "./components/ui/button";
+import { LoginModal } from "./components/login-modal";
+import { SignupModal } from "./components/signup-modal";
 import SupabaseTestPage from "./supatest";
 import styles from "./page.module.css";
 
-
 export default function Home() {
-  const [showLoginModal, setShowLoginModal] = useState(false)
-  const [showSignupModal, setShowSignupModal] = useState(false)
-  const router = useRouter()
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showSignupModal, setShowSignupModal] = useState(false);
+  const router = useRouter();
 
   const handleSuccess = () => {
-    router.push("/dashboard")
-  }
+    router.push("/dashboard");
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md text-center">
-        <Logo className="h-24 w-24 mx-auto mb-6" />
-        <h1 className="text-4xl font-bold text-green-800 mb-2">FreshTrack</h1>
-        <p className="text-green-600 text-lg mb-8">Reduce food waste, save money</p>
+    <div className={styles.container}>
+      <div className={styles.content}>
+        <Logo className={styles.logo} />
+        <h1 className={styles.title}>FreshTrack</h1>
+        <p className={styles.subtitle}>Reduce food waste, save money</p>
 
-        <div className="space-y-4">
+        <div className={styles.buttonContainer}>
           <Button
             onClick={() => setShowLoginModal(true)}
-            className="w-full bg-green-600 hover:bg-green-700 py-6 text-lg"
+            className={styles.loginButton}
           >
-
             Login
           </Button>
 
           <Button
             onClick={() => setShowSignupModal(true)}
             variant="outline"
-            className="w-full border-green-600 text-green-600 hover:bg-green-50 py-6 text-lg"
-
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <SupabaseTestPage />
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-
+            className={styles.signupButton}
           >
             Sign Up
           </Button>
+
+          {/* Include SupabaseTestPage if needed */}
+          <SupabaseTestPage />
         </div>
 
-        <p className="text-sm text-gray-600 mt-8">
-          Track your food expiration dates and get recipe suggestions to reduce waste
+        <p className={styles.footer}>
+          Track your food expiration dates and get recipe suggestions to reduce
+          waste
         </p>
       </div>
 
-      {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} onSuccess={handleSuccess} />}
+      {showLoginModal && (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onSuccess={handleSuccess}
+        />
+      )}
 
-      {showSignupModal && <SignupModal onClose={() => setShowSignupModal(false)} onSuccess={handleSuccess} />}
+      {showSignupModal && (
+        <SignupModal
+          onClose={() => setShowSignupModal(false)}
+          onSuccess={handleSuccess}
+        />
+      )}
     </div>
-  )
+  );
 }
