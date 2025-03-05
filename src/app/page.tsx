@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -6,6 +7,11 @@ import { Logo } from "./components/logo"
 import { Button } from "./components/ui/button"
 import { LoginModal } from "./components/login-modal"
 import { SignupModal } from "./components/signup-modal"
+
+import Image from "next/image";
+import SupabaseTestPage from "./supatest";
+import styles from "./page.module.css";
+
 
 export default function Home() {
   const [showLoginModal, setShowLoginModal] = useState(false)
@@ -28,6 +34,7 @@ export default function Home() {
             onClick={() => setShowLoginModal(true)}
             className="w-full bg-green-600 hover:bg-green-700 py-6 text-lg"
           >
+
             Login
           </Button>
 
@@ -35,6 +42,23 @@ export default function Home() {
             onClick={() => setShowSignupModal(true)}
             variant="outline"
             className="w-full border-green-600 text-green-600 hover:bg-green-50 py-6 text-lg"
+
+            <Image
+              className={styles.logo}
+              src="/vercel.svg"
+              alt="Vercel logomark"
+              width={20}
+              height={20}
+            />
+            Deploy now
+          </a>
+          <SupabaseTestPage />
+          <a
+            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.secondary}
+
           >
             Sign Up
           </Button>
