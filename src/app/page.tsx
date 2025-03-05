@@ -7,7 +7,6 @@ import { Logo } from "./components/logo";
 import { Button } from "./components/ui/button";
 import { LoginModal } from "./components/login-modal";
 import { SignupModal } from "./components/signup-modal";
-
 import SupabaseTestPage from "./supatest";
 import styles from "./page.module.css";
 import LoginPage from "./login/page";
@@ -44,9 +43,7 @@ export default function Home() {
           >
             Sign Up
           </Button>
-
-          {/* Include SupabaseTestPage if needed */}
-          <SupabaseTestPage />
+          
         </div>
 
         <p className={styles.footer}>
@@ -55,22 +52,11 @@ export default function Home() {
         </p>
       </div>
 
-      {showLoginModal && (
-        <LoginModal
-          onClose={() => setShowLoginModal(false)}
-          onSuccess={handleSuccess}
-        />
-      )}
-
-      {showSignupModal && (
-        <SignupModal
-          onClose={() => setShowSignupModal(false)}
-          onSuccess={handleSuccess}
-        />
-      )}
-    <div className={styles.page}>
-      <SupabaseTestPage />
       <LoginPage />
+
+      
+    <div className={styles.page}>
+    </div>
     </div>
   );
 }
