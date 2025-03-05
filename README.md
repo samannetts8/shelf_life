@@ -8,7 +8,7 @@
 
 An app that helps track food expiry dates, cut waste, and prevent overbuying
 
-**Live Demo:** [Your App Link](https://your-app.com/) *(if available)*
+**Live Demo:** https://bc18-shelflife.netlify.app/
 
 ---
 
