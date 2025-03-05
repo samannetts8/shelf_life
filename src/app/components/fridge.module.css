@@ -1,0 +1,43 @@
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sectionHeading {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.expiringSoonHeading {
+  color: #dc2626; /* text-red-600 */
+}
+
+.freshHeading {
+  color: #16a34a; /* text-green-600 */
+}
+
+.expiredHeading {
+  color: #4b5563; /* text-gray-600 */
+}
+
+.icon {
+  height: 1.25rem;
+  width: 1.25rem;
+  margin-right: 0.25rem;
+}
+
+.itemsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
