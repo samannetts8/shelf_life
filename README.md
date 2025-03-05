@@ -1,6 +1,6 @@
-# SoC BC18: Final Hackathon project
+# $${\color{#16a34a}SoC}$$ $${\color{#16a34a}BC18}$$ $${\color{#16a34a}Final}$$ $${\color{#16a34a}Hackathon}$$ $${\color{#16a34a}project}$$
 
-### ShelfLife
+# $${\color{#166534}ShelfLife}$$
 ![logoPlaceholder](https://github.com/user-attachments/assets/31b6917e-0fb8-400f-89ba-b8cea445d989)
 
 
@@ -39,9 +39,9 @@ Our app helps reduce waste by keeping users informed on when their food will exp
 
  **Frontend:** Next.js, TypeScript, CSS modules
 
- **Backend:** Node.js, Express, PostgreSQL
+ **Backend:** Supabase DB
 
-**Authentication:** Clerk
+**Authentication:** Supabase
 
 **Testing:** Vitest (unit testing), Playwright (end-to-end testing)
 
@@ -85,7 +85,7 @@ npm run dev
 
 ## Features
 
-- **User authentication** with Firebase
+- **User authentication** with Supabasebase
 - **Real-time chat** between landlords and tenants
 - **Ticketing system** for maintenance requests
 - **Document upload & storage** for rental agreements
@@ -94,7 +94,8 @@ npm run dev
 
 ## Challenges & Learnings
 
-- What did you and your team struggle with?
+ What did you and your team struggle with?
+  Integrating different elements.
 - What skills did you improve?
 
 Example:
