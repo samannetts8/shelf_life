@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
-import supabase from '@/app/lib/supabase';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET() {
   try {
-    // Query all items without user filtering
+    // Create the client first, then use it
+    const supabase = await createClient();
+
+    // Now use the client
     const { data, error } = await supabase
       .from('TestTable')
       .select('*')
@@ -37,7 +40,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // Insert into Supabase
+    // Create the client first, then use it
+    const supabase = await createClient();
+
+    // Now use the client
     const { data, error } = await supabase
       .from('fridge_items')
       .insert({
