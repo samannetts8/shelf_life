@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import crypto from "crypto"
 
 interface User {
   id: string
@@ -13,6 +14,18 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>
   register: (email: string, password: string) => Promise<void>
   logout: () => void
+}
+
+const secretKey = "your-secret-key" // Replace with a secure key
+
+function encrypt(text: string): string {
+  const cipher = crypto.createCipher("aes-256-ctr", secretKey)
+  return cipher.update(text, "utf8", "hex") + cipher.final("hex")
+}
+
+function decrypt(text: string): string {
+  const decipher = crypto.createDecipher("aes-256-ctr", secretKey)
+  return decipher.update(text, "hex", "utf8") + decipher.final("utf8")
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -38,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const storedUsers = JSON.parse(localStorage.getItem("users") || "[]")
       const user = storedUsers.find((u: any) => u.email === email)
 
-      if (!user || user.password !== password) {
+      if (!user || decrypt(user.password) !== password) {
         throw new Error("Invalid email or password")
       }
 
@@ -61,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error("Email already in use")
       }
 
-      const newUser = { id: Date.now().toString(), email, password }
+      const newUser = { id: Date.now().toString(), email, password: encrypt(password) }
       const updatedUsers = [...storedUsers, newUser]
       localStorage.setItem("users", JSON.stringify(updatedUsers))
 
