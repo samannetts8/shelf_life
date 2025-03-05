@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import styles from "./Mobile-layout.module.css";
+import styles from "./mobile-layout.module.css";
 
 
 interface MobileLayoutProps {

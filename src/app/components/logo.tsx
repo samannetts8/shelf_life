@@ -1,5 +1,5 @@
 import { Leaf } from "lucide-react";
-import styles from "./Logo.module.css";
+import styles from "./logo.module.css";
 
 interface LogoProps {
   className?: string;
