@@ -10,6 +10,7 @@ import {foodCategories} from "../data/food-categories"
 import {getCategoryIcon} from "../utils/category-icons"
 import {useAuth} from "../hooks/use-auth"
 import "./add-item.css" // Import the new CSS file
+import {POST} from "../api/supabaseRoute/route"
 
 export default function AddItem() {
   const router = useRouter()
@@ -19,7 +20,7 @@ export default function AddItem() {
     category: "dairy",
     quantity: "1",
     unit: "item",
-    expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    expiry_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
       .toISOString()
       .split("T")[0],
   })
@@ -39,19 +40,26 @@ export default function AddItem() {
     setFormData((prev) => ({...prev, [name]: value}))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     const newItem: FoodItemType = {
       id: uuidv4(),
       ...formData,
-      addedDate: new Date().toISOString(),
+      added_date: new Date().toISOString(),
     }
 
-    const existingItems = JSON.parse(localStorage.getItem("foodItems") || "[]")
-    const updatedItems = [...existingItems, newItem]
-    localStorage.setItem("foodItems", JSON.stringify(updatedItems))
-
+    const response = await POST(new Request('/api/supabaseRoute', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newItem),
+    }))
+    if (!response.ok) {
+      console.error("Failed to add item:", response.statusText)
+      return
+    }
     router.push("/dashboard")
   }
 
@@ -161,9 +169,9 @@ export default function AddItem() {
             <label htmlFor="expiryDate">Expiration Date</label>
             <input
               type="date"
-              id="expiryDate"
-              name="expiryDate"
-              value={formData.expiryDate}
+              id="expiry_date"
+              name="expiry_date"
+              value={formData.expiry_date}
               onChange={handleChange}
               required
             />
