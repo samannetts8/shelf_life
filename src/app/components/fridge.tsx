@@ -1,34 +1,34 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { FoodItem as FoodItemComponent } from "../components/food-item";
-import { FoodItem } from "../components/food-item";
-import { EmptyState } from "../components/empty-state";
-import { foodItems as initialFoodItems } from "../data/food-items"; // Use a different name
-import type { FoodItemType } from "../types/food-item";
-import styles from "./fridge.module.css";
-import { useAuth } from "../hooks/use-auth";
+import { useEffect, useState } from 'react';
+import { FoodItem as FoodItemComponent } from '../components/food-item';
+import { FoodItem } from '../components/food-item';
+import { EmptyState } from '../components/empty-state';
+import { foodItems as initialFoodItems } from '../data/food-items'; // Use a different name
+import type { FoodItemType } from '../types/food-item';
+import styles from './fridge.module.css';
 
-export function Fridge() {
+// Add userId to the props
+interface FridgeProps {
+  userId: string;
+}
+
+export function Fridge({ userId }: FridgeProps) {
   const [foodItems, setFoodItems] = useState<FoodItemType[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) {
-        setFoodItems(initialFoodItems);
-        setLoading(false);
-        return;
-      }
-
       try {
-        console.log("Fetching data from API...");
-        const response = await fetch("/api/supabaseRoute");
+        // You can use userId here if needed for custom endpoints
+        console.log('Fetching data for user:', userId);
+        const response = await fetch('/api/supabaseRoute');
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error(`API error (${response.status}): ${errorText}`);
+          console.error(
+            `API error (${response.status}): ${errorText}`
+          );
           throw new Error(
             `Failed to fetch data: ${response.status} ${errorText}`
           );
@@ -38,7 +38,7 @@ export function Fridge() {
         console.log(`Received ${data.length} items from API`);
         setFoodItems(data);
       } catch (error) {
-        console.error("Error fetching food items:", error);
+        console.error('Error fetching food items:', error);
         setFoodItems(initialFoodItems);
       } finally {
         setLoading(false);
@@ -46,17 +46,17 @@ export function Fridge() {
     };
 
     fetchData();
-  }, [user]);
+  }, [userId]); // Add userId as dependency since we're using it
 
   const markAsConsumed = async (id: string) => {
     try {
       // Update the database first
       const response = await fetch(`/api/supabaseRoute/${id}`, {
-        method: "DELETE",
+        method: 'DELETE',
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update database");
+        throw new Error('Failed to update database');
       }
 
       // Then update local state
@@ -64,16 +64,19 @@ export function Fridge() {
       setFoodItems(updatedItems);
 
       // Optionally update localStorage for offline capability
-      localStorage.setItem("foodItems", JSON.stringify(updatedItems));
+      localStorage.setItem('foodItems', JSON.stringify(updatedItems));
     } catch (error) {
-      console.error("Error marking item as consumed:", error);
+      console.error('Error marking item as consumed:', error);
       // Handle error (show notification, etc.)
     }
   };
 
   // Sort items by expiration date (soonest first)
   const sortedItems = [...foodItems].sort((a, b) => {
-    return new Date(a.expiry_date).getTime() - new Date(b.expiry_date).getTime();
+    return (
+      new Date(a.expiry_date).getTime() -
+      new Date(b.expiry_date).getTime()
+    );
   });
 
   // Group items by expiration status
@@ -143,7 +146,9 @@ export function Fridge() {
 
       {goodItems.length > 0 && (
         <section>
-          <h2 className={`${styles.sectionHeading} ${styles.freshHeading}`}>
+          <h2
+            className={`${styles.sectionHeading} ${styles.freshHeading}`}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className={styles.icon}
@@ -152,7 +157,7 @@ export function Fridge() {
             >
               <path
                 fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                 clipRule="evenodd"
               />
             </svg>
@@ -173,7 +178,9 @@ export function Fridge() {
 
       {expiredItems.length > 0 && (
         <section>
-          <h2 className={`${styles.sectionHeading} ${styles.expiredHeading}`}>
+          <h2
+            className={`${styles.sectionHeading} ${styles.expiredHeading}`}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className={styles.icon}

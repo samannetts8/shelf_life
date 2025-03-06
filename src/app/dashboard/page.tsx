@@ -1,37 +1,21 @@
-"use client"
+import { redirect } from 'next/navigation';
+import { createClient } from '../utils/supabase/server';
+import { Fridge } from '../components/fridge';
+import { MobileLayout } from '../components/mobile-layout';
 
-import {useEffect} from "react"
-import {useRouter} from "next/navigation"
-import {Fridge} from "../components/fridge"
-import {MobileLayout} from "../components/mobile-layout"
-import {useAuth} from "../hooks/use-auth"
+export default async function Dashboard() {
+  // Server-side auth check
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getUser();
 
-export default function Dashboard() {
-  const {user, isLoading} = useAuth()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.push("/")
-    }
-  }, [user, isLoading, router])
-
-  if (isLoading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return null // Will redirect in useEffect
+  // Redirect if not authenticated
+  if (error || !data?.user) {
+    redirect('/login');
   }
 
   return (
     <MobileLayout>
-      <Fridge />
+      <Fridge userId={data.user.id} />
     </MobileLayout>
-  )
+  );
 }
-
