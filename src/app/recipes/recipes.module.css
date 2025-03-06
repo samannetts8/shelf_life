@@ -28,9 +28,10 @@
   /* Cards Container */
   .cardsContainer {
     display: flex;
-    gap: 12px;
+    gap: 30px;
+    row-gap: 10px;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: center;
   }
   
   /* Carousel Styles */
@@ -47,6 +48,13 @@
     padding: 4px 0;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE/Edge */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    cursor: grab; /* Show grab cursor */
+    user-select: none; /* Prevent text selection while dragging */
+  }
+  
+  .carousel:active {
+    cursor: grabbing; /* Show grabbing cursor while dragging */
   }
   
   .carousel::-webkit-scrollbar {
