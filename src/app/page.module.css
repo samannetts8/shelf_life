@@ -295,31 +295,16 @@ a.secondary {
 }
 
 .scrollElementPrimary {
-  animation: scrollPrimary 15s linear infinite; /* Increased duration */
+  animation: scrollPrimary 15s linear infinite;
   left: 100vw;
-}
-
-.scrollElementSecondary {
-  animation: scrollSecondary 15s linear infinite; /* Increased duration */
-  left: 150vw;
-  display: flex; /* Explicitly set display */
 }
 
 @keyframes scrollPrimary {
   0% {
-    left: 100vw;
+    left: 100vw; /* Start further right */
   }
   100% {
-    left: -150vw; /* Adjusted endpoint */
-  }
-}
-
-@keyframes scrollSecondary {
-  0% {
-    left: 150vw;
-  }
-  100% {
-    left: -100vw; /* Adjusted endpoint */
+    left: -35vw; /* End further left */
   }
 }
 
