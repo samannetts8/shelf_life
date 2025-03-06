@@ -68,11 +68,23 @@ export default function Home() {
         />
       </div>
       <div className={styles.content}>
-        <Logo className={styles.logo} />
-        <h1 className={styles.title}>ShelfLife</h1>
-        <p className={styles.subtitle}>Waste less, taste more!</p>
+        <Logo
+          className={`animate__animated animate__backInDown animate__delay-1s ${styles.logo}`}
+        />
+        <h1
+          className={`animate__animated animate__backInLeft animate__delay-2s ${styles.title}`}
+        >
+          ShelfLife
+        </h1>
+        <p
+          className={`animate__animated animate__backInRight animate__delay-2s ${styles.subtitle}`}
+        >
+          Waste less, taste more!
+        </p>
 
-        <p className={styles.footer}>
+        <p
+          className={`animate__animated animate__backInUp animate__delay-3s ${styles.footer}`}
+        >
           Track your food expiration dates and get recipe suggestions to reduce
           waste
         </p>
