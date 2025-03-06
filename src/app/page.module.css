@@ -1,3 +1,11 @@
+html,
+body {
+  overflow: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .page {
   --gray-rgb: 0, 0, 0;
   --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
@@ -68,10 +76,7 @@
   padding: 0 20px;
   border: none;
   border: 1px solid transparent;
-  transition:
-    background 0.2s,
-    color 0.2s,
-    border-color 0.2s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -161,20 +166,15 @@ a.secondary {
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
-}
-
 .container {
   min-height: 100vh;
   background: linear-gradient(to bottom, #f0fdf4, #dcfce7);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 1rem;
+  justify-content: space-between;
+  padding: 2rem;
+  gap: 2rem;
 }
 
 .content {
@@ -236,4 +236,39 @@ a.secondary {
   font-size: 0.875rem;
   color: #4b5563; /* text-gray-600 */
   margin-top: 2rem;
+}
+
+.images {
+  display: flex;
+  justify-content: center;
+  gap: 0rem;
+}
+
+/* Add initial state */
+.images img {
+  transition: all 0.3s ease;
+}
+
+/* Remove animation styles from CSS module since they're handled by animate.css classes */
+.images img:hover {
+  cursor: pointer;
+}
+
+/* Add media query for mobile responsiveness */
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .images {
+    gap: 0;
+    scale: 0.8; /* Smaller scale for mobile */
+  }
+
+  .images img {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
 }
