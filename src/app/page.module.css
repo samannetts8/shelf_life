@@ -68,10 +68,7 @@
   padding: 0 20px;
   border: none;
   border: 1px solid transparent;
-  transition:
-    background 0.2s,
-    color 0.2s,
-    border-color 0.2s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -161,12 +158,6 @@ a.secondary {
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
-}
-
 .container {
   min-height: 100vh;
   background: linear-gradient(to bottom, #f0fdf4, #dcfce7);
@@ -236,4 +227,20 @@ a.secondary {
   font-size: 0.875rem;
   color: #4b5563; /* text-gray-600 */
   margin-top: 2rem;
+}
+
+.images {
+  display: flex;
+  justify-content: center;
+  gap: 0rem;
+}
+
+/* Add initial state */
+.images img {
+  transition: all 0.3s ease;
+}
+
+/* Remove animation styles from CSS module since they're handled by animate.css classes */
+.images img:hover {
+  cursor: pointer;
 }
