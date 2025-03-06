@@ -1,3 +1,54 @@
+import { HfInference } from '@huggingface/inference';
+import { FoodItemType } from '../types/food-item';
+
+export default async function getAiRecipes(ingredients: FoodItemType[], ) {
+    console.log('Getting recipes from HuggingFace AI using ingredients');
+
+    try {
+        const hf = new HfInference(process.env.HUGGINGFACE_API_TOKEN);
+        const prompt = `Recipes using these ingredients: ${ingredients.join(',')}`;
+        const response = await hf.textGeneration({
+            model: 'gpt2',
+            inputs: prompt,
+            parameters: {
+                max_new_tokens: 250,
+                temperature: 0.7,
+            },
+        });
+        const generatedText = response.generated_text;
+        return [
+            {
+                recipeDetails: generatedText,
+                foodList: ingredients,
+            },
+        ];
+
+    } catch (err) {
+        console.error('Error fetching from Hugging Face AI', err);
+    }
+    return [
+        {
+            recipeDetails: 'Could not generate AI recipe suggestions',
+            foodList: ingredients,
+        }
+    ];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //Get Recipes helper function
 //Given an array of expiring food items (by user clicking find recipes or automatically on fridge load)
 //Search our supabase sql database for recipes that include at least one of the expiring food items.

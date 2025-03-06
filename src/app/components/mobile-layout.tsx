@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import styles from "./Mobile-layout.module.css";
+import type { FoodItemType } from '../types/food-item';
 
 
 interface MobileLayoutProps {
@@ -9,6 +11,7 @@ interface MobileLayoutProps {
 }
 
 export function MobileLayout({ children }: MobileLayoutProps) {
+  const [foodItems, setFoodItems] = useState<FoodItemType[]>([]);
   return (
     <div className={styles.container}>
       {/* Header */}
