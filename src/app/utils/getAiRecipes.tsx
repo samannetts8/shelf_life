@@ -6,7 +6,7 @@ export default async function getAiRecipes(ingredients: FoodItemType[], ) {
 
     try {
         const hf = new HfInference(process.env.HUGGINGFACE_API_TOKEN);
-        const prompt = `Recipes using these ingredients: ${ingredients.join(',')}`;
+        const prompt = `Existing recipes using as many of these ingredients as possible: ${ingredients.join(',')}`;
         const response = await hf.textGeneration({
             model: 'gpt2',
             inputs: prompt,

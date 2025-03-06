@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { MobileLayout } from "../components/mobile-layout";
-import { useFoodItems } from "../hooks/foodItemContext";
-import styles from "./ai.module.css";
-import ClientLayout from "../ClientLayout";
+import { useState, useEffect } from 'react';
+import { MobileLayout } from '../components/mobile-layout';
+import { useFoodItems } from '../hooks/foodItemContext';
+import styles from './ai.module.css';
+import ClientLayout from '../ClientLayout';
 
 interface Recipe {
   title: string;
@@ -23,7 +23,9 @@ function AIRecipeContent() {
 
   const generateRecipes = async () => {
     if (expiringSoon.length === 0) {
-      setError("No ingredients expiring soon to generate recipes with.");
+      setError(
+        'No ingredients expiring soon to generate recipes with.'
+      );
       return;
     }
 
@@ -34,25 +36,27 @@ function AIRecipeContent() {
       // Format the ingredients for the AI
       const ingredientsList = expiringSoon
         .map((item) => `${item.name} (${item.quantity} ${item.unit})`)
-        .join(", ");
+        .join(', ');
 
-      const response = await fetch("/api/aiRecipes", {
-        method: "POST",
+      const response = await fetch('/api/ai', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ ingredients: ingredientsList }),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to generate recipes: ${response.status}`);
+        throw new Error(
+          `Failed to generate recipes: ${response.status}`
+        );
       }
 
       const data = await response.json();
       setRecipes(data.recipes || []);
     } catch (err) {
-      setError("Failed to generate recipes. Please try again.");
-      console.error("Error generating recipes:", err);
+      setError('Failed to generate recipes. Please try again.');
+      console.error('Error generating recipes:', err);
     } finally {
       setAiLoading(false);
     }
@@ -75,7 +79,8 @@ function AIRecipeContent() {
                 <li key={item.id}>
                   {item.name} - {item.quantity} {item.unit}
                   <span className={styles.expiryDate}>
-                    Expires: {new Date(item.expiry_date).toLocaleDateString()}
+                    Expires:{' '}
+                    {new Date(item.expiry_date).toLocaleDateString()}
                   </span>
                 </li>
               ))}
@@ -88,7 +93,7 @@ function AIRecipeContent() {
           onClick={generateRecipes}
           disabled={loading || aiLoading || expiringSoon.length === 0}
         >
-          {aiLoading ? "Generating..." : "Generate Recipes"}
+          {aiLoading ? 'Generating...' : 'Generate Recipes'}
         </button>
 
         {error && <div className={styles.error}>{error}</div>}
