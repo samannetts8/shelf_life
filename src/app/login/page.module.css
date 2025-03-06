@@ -1,18 +1,50 @@
+/* Apply styles to buttons */
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  border-radius: 0.375rem;
+  border-radius: 999px; /* Fully rounded buttons */
   font-size: 0.875rem;
   font-weight: 500;
-  transition-property: color, background-color, border-color;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background-color: #166534; /* Dark green */
+  color: white;
+  transition: background-color 0.2s ease-in-out;
 }
 
+.button:hover {
+  background-color: #15803d; /* Slightly lighter green on hover */
+}
+
+/* Style the form container */
 .form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+/* Style input fields with a class */
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #16a34a; /* Green border */
+  border-radius: 0.75rem; /* Smooth rounded corners */
+  background-color: #f0fdf4; /* Light green background */
+  font-size: 1rem;
+  color: #166534; /* Dark green text */
+  outline: none;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.input:focus {
+  border-color: #15803d; /* Darker green focus effect */
+}
+
+/* Error message styling */
+.error {
+  color: red;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
 }

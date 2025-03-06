@@ -1,7 +1,7 @@
-'use client';
-import { useState } from 'react';
-import { login, signup } from './actions';
-import styles from './page.module.css';
+"use client";
+import { useState } from "react";
+import { login, signup } from "./actions";
+import styles from "./page.module.css";
 
 // Define the type for auth results
 type AuthResult = { error: string } | undefined;
@@ -35,12 +35,19 @@ export default function LoginPage() {
       {error && <div className={styles.error}>{error}</div>}
       <form className={styles.form}>
         <label htmlFor="email">Email:</label>
-        <input id="email" name="email" type="email" required />
+        <input
+          id="email"
+          name="email"
+          type="email"
+          className={styles.input}
+          required
+        />
         <label htmlFor="password">Password:</label>
         <input
           id="password"
           name="password"
           type="password"
+          className={styles.input}
           required
         />
         <button
@@ -48,14 +55,14 @@ export default function LoginPage() {
           formAction={handleLogin}
           disabled={isLoading}
         >
-          {isLoading ? 'Logging in...' : 'Log in'}
+          {isLoading ? "Logging in..." : "Log in"}
         </button>
         <button
           className={styles.button}
           formAction={handleSignup}
           disabled={isLoading}
         >
-          {isLoading ? 'Signing up...' : 'Sign up'}
+          {isLoading ? "Signing up..." : "Sign up"}
         </button>
       </form>
     </div>
