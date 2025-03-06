@@ -208,7 +208,7 @@ export default function Home() {
           className={`animate__animated animate__backInUp animate__delay-2s ${styles.footer}`}
         >
           Track your food expiration dates and get recipe suggestions to reduce
-          waste
+          waste.
         </p>
       </div>
       <div className="animate__animated animate__bounceIn animate__delay-3s">

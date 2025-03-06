@@ -190,7 +190,7 @@ a.secondary {
 }
 
 .title {
-  font-size: 2.25rem;
+  font-size: 3rem;
   font-weight: 700;
   color: #166534; /* text-green-800 */
   margin-bottom: 0.5rem;
@@ -198,8 +198,9 @@ a.secondary {
 
 .subtitle {
   color: #16a34a; /* text-green-600 */
-  font-size: 1.125rem;
-  margin-bottom: 2rem;
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .buttonContainer {
@@ -233,8 +234,11 @@ a.secondary {
 }
 
 .footer {
-  font-size: 0.875rem;
-  color: #4b5563; /* text-gray-600 */
+  font-size: 0.95rem;
+  padding-left: 40px;
+  padding-right: 40px;
+  text-wrap: wrap;
+  color: #047857;
   margin-top: 2rem;
 }
 
@@ -258,8 +262,7 @@ a.secondary {
 @media (max-width: 480px) {
   .container {
     flex-direction: column;
-    padding: 1rem;
-    gap: 1rem;
+    gap: 1.4rem;
   }
 
   .images {
