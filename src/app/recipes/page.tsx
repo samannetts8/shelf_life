@@ -292,7 +292,7 @@ function RecipeCard({ recipe, cardColor }: RecipeCardProps) {
           {truncateTitle(recipe.name)}
         </h3>
         <p className={styles.recipeMatches}>
-          Ingredients used: <span>{recipe.match_count}</span>
+          Ingredients used: <span>{recipe.match_count == null? 0:recipe.match_count}</span>
         </p>
       </div>
     </div>
