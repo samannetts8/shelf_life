@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import styles from './recipes.module.css';
 import { MobileLayout } from '../components/mobile-layout';
+import { FoodItemType } from '../types/food-item';
+import { foodItems as initialFoodItems } from '../data/food-items';
+import { FoodItem } from '../components/food-item';
 
 // Define the Recipe type
 interface Recipe {
@@ -42,13 +45,40 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const dummy_ingredients = [{"name":"Quinoa","expiry_date":"2025-03-06 13:35:12.768+00"},{"name":"herbs","expiry_date":"2025-03-06 10:59:11.828+00"},{"name":"corn tortillas","expiry_date":"2025-03-06 13:35:12.768+00"},{"name":"cilantro","expiry_date":"2025-03-06 10:59:11.828+00"},{"name":"avocado","expiry_date":"2025-03-06 13:35:12.768+00"},{"name":"bbq sauce","expiry_date":"2025-03-06 10:59:11.828+00"}]
-
 export default function RecipesPage() {
   const [topMatches, setTopMatches] = useState<Recipe[]>([]);
   const [otherMatches, setOtherMatches] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
+  const [foodItems, setFoodItems] = useState<FoodItemType[]>([]);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Function to fetch food items
+  const refreshItems = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/supabaseRoute');
+      console.log(JSON.stringify(response,null,2))
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`API error (${response.status}): ${errorText}`);
+        throw new Error(`Failed to fetch data: ${response.status} ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log(`Received ${data.length} items from API`);
+      setFoodItems(data);
+    } catch (error) {
+      console.error('Error fetching food items:', error);
+      setFoodItems(initialFoodItems);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+    useEffect(() => {
+      refreshItems();
+    }, []);
+  
 
   function cleanIngredientsData(ingredients: Array<{name: string, expiry_date: string}>) {
     return ingredients.map(ingredient => ({
@@ -57,22 +87,22 @@ export default function RecipesPage() {
     }));
   }
 
-  const clean_dummy = cleanIngredientsData(dummy_ingredients)
-
   useEffect(() => {
+    if (foodItems.length === 0) return; // Don't run if no food items
+
+    const clean_dummy = cleanIngredientsData(foodItems);
+    console.log('Cleaned food items:', clean_dummy);
+
     async function fetchRecipes() {
       try {
-        
         const { data: allRecipes, error } = await supabase
-        .from('recipes')
-        .select('*');
+          .from('recipes')
+          .select('*');
 
-      
-      if (error) throw error;
-      console.log("test1")
-      console.log(allRecipes)
-
-      
+        if (error) throw error;
+        console.log("test1")
+        console.log(allRecipes)
+     
       // Process recipes to count matches
       const processedRecipes = allRecipes.map(recipe => {
         let matchCount = 0;
@@ -126,7 +156,7 @@ export default function RecipesPage() {
     }
 
     fetchRecipes();
-  }, []);
+  }, [foodItems]);
 
   // Scroll functions for the carousel
   const scrollLeft = () => {
