@@ -66,15 +66,12 @@ export async function POST(request: Request) {
       );
     }
 
-    // IMPORTANT: Don't spread the body - explicitly define only the fields you need
-    // with the exact column names that match your database
     const itemToInsert = {
       name: body.name,
       category: body.category,
       quantity: body.quantity,
       unit: body.unit,
-      user_id: user.id, // Changed from session.user.id
-      // Use the correct column name based on your DB schema
+      user_id: user.id, 
       expiry_date: body.expiry_date || body.expiryDate,
       added_date: new Date().toISOString(),
     };

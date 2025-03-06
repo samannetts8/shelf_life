@@ -1,34 +1,12 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { FoodItemType } from '../../types/food-item';
+import { FoodItemType } from '@/app/types/food-item';
+import {
+  Recipe,
+  OpenAIRecipeResponse,
+} from '@/app/types/ai-recipe-types';
 import OpenAI from 'openai';
 
-// Create an interface for your recipe structure
-
-// First add this interface near the top of your file:
-interface Recipe {
-  title: string;
-  ingredients: string[];
-  instructions: string;
-  emoji: string;
-  source: string;
-  tip?: string;
-  imageUrl?: string;
-  matchScore?: number;
-  matchPercentage?: number;
-  id?: number | string;
-}
-
-// Create an interface for the OpenAI recipe response structure
-interface OpenAIRecipeResponse {
-  title: string;
-  ingredients: string[] | string;
-  instructions: string;
-  emoji?: string;
-  tip?: string;
-}
-
-// Update this function:
 export async function getAiRecipes(ingredients: FoodItemType[]) {
   console.log('Getting recipes from OpenAI using ingredients');
   const ingredientsArray = ingredients.map((item) => item.name);
@@ -125,7 +103,7 @@ export async function POST(request: Request) {
 
     const ingredientList = parseIngredients(ingredients);
 
-    // STEP 1: Search database for recipes with matching ingredients
+    // Search database for recipes with matching ingredients
     const { data: dbRecipes, error: dbError } = await supabase
       .from('recipes')
       .select('*');
@@ -198,12 +176,12 @@ export async function POST(request: Request) {
         id: recipe.id,
       }));
 
-    // STEP 2: If we have 3+ matching recipes, return those
+    // If we have 3+ matching recipes, return those
     if (numDbRecipes >= 3) {
       return NextResponse.json({ recipes: formattedDbRecipes });
     }
 
-    // STEP 3: Otherwise, we need to generate AI recipes
+    // Otherwise, we need to generate AI recipes
     const numAiRecipesNeeded = 3;
     console.log(`Generating ${numAiRecipesNeeded} AI recipes`);
 
@@ -217,7 +195,6 @@ export async function POST(request: Request) {
         apiKey: process.env.OPENAI_API_KEY,
       });
 
-      // Create a detailed prompt for recipe generation
       const prompt = `
 Generate ${numAiRecipesNeeded} unique recipes using these ingredients: ${ingredients}
 
@@ -226,8 +203,6 @@ For each recipe provide:
 1. A creative, appetizing title
 2. A list of ingredients (including those from the provided list plus basic pantry items)
 3. Clear step-by-step cooking instructions
-4. An appropriate emoji representing the dish
-5. A helpful cooking tip
 
 Format your response as a JSON object with an array of recipes like this:
 {
@@ -235,16 +210,7 @@ Format your response as a JSON object with an array of recipes like this:
     {
       "title": "Recipe Name",
       "ingredients": ["Ingredient 1", "Ingredient 2"],
-      "instructions": "Step-by-step cooking process",
-      "emoji": "🍲",
-      "tip": "A useful cooking tip"
-    },
-    {
-      "title": "Another Recipe",
-      "ingredients": ["Ingredient 1", "Ingredient 2"],
-      "instructions": "Step-by-step cooking process",
-      "emoji": "🍜",
-      "tip": "A useful cooking tip"
+      "instructions": "Step-by-step cooking process"
     }
   ]
 }
@@ -275,9 +241,58 @@ Format your response as a JSON object with an array of recipes like this:
 
       // Try to parse the response
       if (generatedText) {
-        aiRecipes = parseGeneratedRecipes(
+        // Parse recipes without images
+        let parsedRecipes = parseGeneratedRecipes(
           generatedText,
           numAiRecipesNeeded
+        );
+
+        console.log(
+          `Found ${parsedRecipes.length} recipes in OpenAI response`
+        );
+
+        // Map over recipes and add images
+        aiRecipes = await Promise.all(
+          parsedRecipes.map(async (recipe, index) => {
+            try {
+              // Try to get image from Spoonacular
+              const imageUrl = await getSpoonacularImage(
+                recipe.title,
+                index
+              );
+              return { ...recipe, imageUrl };
+            } catch (imageError) {
+              console.error(
+                `Error fetching image for recipe ${index + 1}: ${
+                  recipe.title
+                }`,
+                imageError
+              );
+
+              // Fall back to using Unsplash (which is also async)
+              try {
+                const fallbackImageUrl = await getRecipeImage(
+                  recipe,
+                  index
+                );
+                return { ...recipe, imageUrl: fallbackImageUrl };
+              } catch (fallbackError) {
+                console.error(
+                  `Fallback image also failed for recipe ${
+                    index + 1
+                  }`,
+                  fallbackError
+                );
+                // Use a simple static fallback as last resort
+                return {
+                  ...recipe,
+                  imageUrl: `/images/recipes/fallback-${
+                    (index % 5) + 1
+                  }.jpg`,
+                };
+              }
+            }
+          })
         );
       } else {
         console.error('Generated text is null');
@@ -307,19 +322,68 @@ Format your response as a JSON object with an array of recipes like this:
       );
     }
 
-    // Combine database and AI recipes
-    const allRecipes = [...formattedDbRecipes, ...aiRecipes];
+    // Update the image fetching code with absolute URL
+    const recipesWithImages = await Promise.all(
+      aiRecipes.map(async (recipe, index) => {
+        console.log(
+          `Fetching image for recipe ${index + 1}: ${recipe.title}`
+        );
+        try {
+          // Use absolute URL for API endpoint
+          const baseUrl =
+            process.env.NEXT_PUBLIC_BASE_URL ||
+            'http://localhost:3000';
+          const imageResponse = await fetch(
+            `${baseUrl}/api/ai-image`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                title: recipe.title || '',
+                ingredients: recipe.ingredients || [],
+              }),
+            }
+          );
 
-    // Save recipe request to history (optional)
-    try {
-      await supabase.from('recipe_history').insert({
+          if (imageResponse.ok) {
+            const imageData = await imageResponse.json();
+            console.log(
+              `Image for recipe ${index + 1}:`,
+              imageData.imageUrl
+            );
+            return {
+              ...recipe,
+              imageUrl: imageData.imageUrl,
+            };
+          }
+        } catch (error) {
+          console.error(
+            `Error fetching image for recipe ${index + 1}:`,
+            error
+          );
+        }
+        return recipe;
+      })
+    );
+
+    const allRecipes = [...formattedDbRecipes, ...recipesWithImages];
+
+    // Save the recipe generation history
+    const { error: historyError } = await supabase
+      .from('recipe_generation_history')
+      .insert({
         user_id: user.id,
-        ingredients: ingredients,
-        created_at: new Date().toISOString(),
+        ingredients: ingredientList,
+        recipes: allRecipes,
       });
-    } catch (historyError) {
-      console.error('Error saving recipe history:', historyError);
-      // Continue even if history saving fails
+
+    if (historyError) {
+      console.error(
+        'Error saving recipe generation history:',
+        historyError
+      );
     }
 
     return NextResponse.json({ recipes: allRecipes });
@@ -331,8 +395,6 @@ Format your response as a JSON object with an array of recipes like this:
     );
   }
 }
-
-// Update your parseGeneratedRecipes function:
 
 function parseGeneratedRecipes(
   generatedText: string,
@@ -349,7 +411,7 @@ function parseGeneratedRecipes(
       );
 
       // Process each recipe in the array with proper typing
-      return jsonResponse.recipes
+      const recipes = jsonResponse.recipes
         .slice(0, numRecipes)
         .map((recipeData: OpenAIRecipeResponse, index: number) => {
           // Create recipe object with our Recipe interface
@@ -359,20 +421,17 @@ function parseGeneratedRecipes(
               ? recipeData.ingredients
               : recipeData.ingredients?.split('\n') || [],
             instructions: recipeData.instructions || '',
-            emoji: recipeData.emoji || '🍳',
-            tip: recipeData.tip || '',
             source: 'ai',
-            imageUrl: '', // Initialize with empty string
+            imageUrl: '',
           };
-
-          // Set the imageUrl with index for uniqueness
-          recipe.imageUrl = getRecipeImage(recipe, index);
 
           return recipe;
         });
+
+      // Add the images asynchronously and return
+      return recipes;
     }
 
-    // Fallback to check for single recipe format (backup compatibility)
     if (
       jsonResponse.title &&
       jsonResponse.ingredients &&
@@ -380,27 +439,19 @@ function parseGeneratedRecipes(
     ) {
       console.log('Found single recipe in OpenAI response');
 
-      // Create recipe object WITH imageUrl property
       const recipe: Recipe = {
         title: jsonResponse.title,
         ingredients: Array.isArray(jsonResponse.ingredients)
           ? jsonResponse.ingredients
           : jsonResponse.ingredients.split('\n'),
         instructions: jsonResponse.instructions,
-        emoji: jsonResponse.emoji || '🍳',
-        tip: jsonResponse.tip || '',
         source: 'ai',
-        imageUrl: '', // Initialize with empty string
+        imageUrl: '',
       };
-
-      // Then set the imageUrl value
-      recipe.imageUrl = getRecipeImage(recipe);
 
       return [recipe];
     }
 
-    // If we get here, the JSON didn't have the expected structure,
-    // fall back to the regex parsing
     console.log('Using regex parsing as fallback');
     return parseWithRegex(generatedText, numRecipes);
   } catch (error) {
@@ -409,8 +460,6 @@ function parseGeneratedRecipes(
     return parseWithRegex(generatedText, numRecipes);
   }
 }
-
-// Update in parseWithRegex function:
 
 function parseWithRegex(
   generatedText: string,
@@ -427,30 +476,22 @@ function parseWithRegex(
   ) {
     const [_, title, ingredients, instructions, emoji] = match;
 
-    // Create with imageUrl property
-    const recipe: Recipe = {
+    recipes.push({
       title: title.trim(),
       ingredients: ingredients
         .split('\n')
         .map((i: string) => i.replace(/^- /, '').trim())
         .filter(Boolean),
       instructions: instructions.trim(),
-      emoji: emoji.trim(),
       source: 'ai',
-      imageUrl: '', // Initialize with empty string
-    };
-
-    // Then set the imageUrl
-    recipe.imageUrl = getRecipeImage(recipe);
-
-    recipes.push(recipe);
+      imageUrl: '',
+    });
   }
 
   return recipes;
 }
 
-// Update in generateFallbackRecipes function:
-
+// Update in generateFallbackRecipes similarly:
 function generateFallbackRecipes(
   ingredients: string[],
   count: number
@@ -528,142 +569,71 @@ function generateFallbackRecipes(
   ];
 
   // Generate recipes from templates
-  for (let i = 0; i < Math.min(count, templates.length); i++) {
-    const template = templates[i];
-
-    // Create with imageUrl property
-    const recipe: Recipe = {
-      title: template.title(ingredients),
-      ingredients: template.ingredients(ingredients).filter(Boolean),
-      instructions: template.instructions(ingredients),
-      emoji: template.emoji,
-      source: 'fallback',
-      imageUrl: '', // Initialize with empty string
-    };
-
-    // Then set the imageUrl with unique index
-    recipe.imageUrl = getRecipeImage(recipe, i);
-
-    recipes.push(recipe);
-  }
-
-  return recipes;
+  return templates.slice(0, count).map((template, i) => ({
+    title: template.title(ingredients),
+    ingredients: template.ingredients(ingredients).filter(Boolean),
+    instructions: template.instructions(ingredients),
+    source: 'fallback',
+    imageUrl: '',
+  }));
 }
 
-// Update the getRecipeImage function:
+// Update the getRecipeImage function to be more reliable:
 
-function getRecipeImage(
-  recipe: {
-    title: string;
-    emoji?: string;
-  },
-  index?: number
-): string {
-  // Get main dish type
-  const dishTypes = [
-    'pasta',
-    'salad',
-    'soup',
-    'stew',
-    'curry',
-    'sandwich',
-    'burger',
-    'salad',
-    'stir-fry',
-    'roast',
-    'cake',
-    'pie',
-    'bread',
-    'taco',
-    'soup',
-    'noodle',
-    'chicken',
-    'fish',
-    'dessert',
-    'breakfast',
-    'stew',
-    'curry',
-    'sandwich',
-    'burger',
-    'pizza',
-    'stir-fry',
-    'roast',
-    'cake',
-    'pie',
-    'bread',
-    'taco',
-    'rice',
-    'noodle',
-    'chicken',
-    'fish',
-    'dessert',
-    'breakfast',
-  ];
-  const titleLower = recipe.title.toLowerCase();
-  const mainDishType =
-    dishTypes.find((type) => titleLower.includes(type)) || '';
+async function getRecipeImage(
+  recipe: Recipe,
+  index: number
+): Promise<string> {
+  try {
+    // Add a retry mechanism
+    let attempts = 0;
+    const maxAttempts = 3;
 
-  // Extract key food terms
-  const foodTerms = extractFoodTerms(recipe.title);
-  const emojiTerm = getEmojiSearchTerm(recipe.emoji || '');
+    while (attempts < maxAttempts) {
+      attempts++;
+      console.log(
+        `Attempt ${attempts} to fetch image for ${recipe.title}`
+      );
 
-  // Build search query with priority to dish type
-  const searchTerms = [];
+      const response = await fetch('/api/ai-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: recipe.title || '',
+          ingredients: recipe.ingredients || [],
+        }),
+      });
 
-  // Add main dish type first if found
-  if (mainDishType) {
-    searchTerms.push(mainDishType);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.imageUrl) {
+          console.log(
+            `Successfully fetched image for ${recipe.title}:`,
+            data.imageUrl
+          );
+          return data.imageUrl;
+        }
+      }
+
+      // Wait before retry
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+
+    // If all attempts fail, use a numbered fallback to ensure uniqueness
+    console.warn(
+      `Failed to fetch image for ${recipe.title} after ${maxAttempts} attempts`
+    );
+    return `/images/recipes/fallback-${(index % 5) + 1}.jpg`;
+  } catch (error) {
+    console.error(
+      `Error in getRecipeImage for ${recipe.title}:`,
+      error
+    );
+    // Return a fallback
+    return `/images/recipes/fallback-${(index % 5) + 1}.jpg`;
   }
-
-  // Add other food terms and emoji term
-  [...foodTerms, emojiTerm]
-    .filter((term) => term && term !== mainDishType) // avoid duplicates
-    .slice(0, 2 - (mainDishType ? 1 : 0)) // take up to 2 terms total
-    .forEach((term) => searchTerms.push(term));
-
-  // Select the most appropriate collection
-  let collectionId = '4252079'; // Default food photography
-
-  if (
-    titleLower.includes('dessert') ||
-    titleLower.includes('cake') ||
-    recipe.emoji === '🍰' ||
-    recipe.emoji === '🧁'
-  ) {
-    collectionId = '8961098'; // Desserts
-  } else if (titleLower.includes('salad') || recipe.emoji === '🥗') {
-    collectionId = '3330455'; // Healthy food
-  } else if (
-    titleLower.includes('pasta') ||
-    titleLower.includes('italian')
-  ) {
-    collectionId = '5024590'; // Pasta & Italian
-  } else if (
-    titleLower.includes('breakfast') ||
-    recipe.emoji === '🍳'
-  ) {
-    collectionId = '9370362'; // Breakfast
-  } else if (
-    titleLower.includes('asian') ||
-    titleLower.includes('stir fry') ||
-    titleLower.includes('curry') ||
-    recipe.emoji === '🍜'
-  ) {
-    collectionId = '8073401'; // Asian food
-  }
-
-  // Format search query
-  const finalQuery =
-    searchTerms.length > 0 ? searchTerms.join(',') : 'food,dish';
-
-  console.log(
-    `Image for "${recipe.title}": using collection ${collectionId} with query "${finalQuery}"`
-  );
-
-  // Return the optimized Unsplash collection URL
-  return `https://source.unsplash.com/collection/${collectionId}/400x300/?${encodeURIComponent(
-    finalQuery
-  )}&sig=${index !== undefined ? index : Math.random()}`;
 }
 
 // Helper function to extract food terms from recipe title
@@ -696,33 +666,60 @@ function extractFoodTerms(title: string): string[] {
     .filter((word) => word.length > 3 && !commonTerms.includes(word));
 }
 
-// Helper function to convert emoji to search term
-function getEmojiSearchTerm(emoji: string): string {
-  const emojiToSearchTerm: Record<string, string> = {
-    '🍲': 'soup',
-    '🍛': 'curry',
-    '🍝': 'pasta',
-    '🥘': 'stir-fry',
-    '🥗': 'salad',
-    '🍕': 'pizza',
-    '🍳': 'breakfast',
-    '🍔': 'burger',
-    '🌮': 'taco',
-    '🍜': 'noodles',
-    '🍚': 'rice',
-    '🍗': 'chicken',
-    '🍖': 'meat',
-    '🍞': 'bread',
-    '🥪': 'sandwich',
-    '🍰': 'cake',
-    '🍎': 'apple',
-    '🥕': 'carrot',
-    '🍆': 'eggplant',
-    '🥑': 'avocado',
-    '🌽': 'corn',
-    '🍤': 'shrimp',
-    '🐟': 'fish',
-    '🥩': 'steak',
-  };
-  return emojiToSearchTerm[emoji] || '';
+// Update this function to fix the TypeScript errors:
+
+// Function to get recipe image from Spoonacular API
+async function getSpoonacularImage(
+  recipeTitle: string,
+  index: number = 0
+): Promise<string> {
+  try {
+    console.log(`Fetching Spoonacular image for: ${recipeTitle}`);
+
+    // Clean up the title for better search results
+    const cleanTitle = recipeTitle
+      .replace(/\(.*?\)/g, '') // Remove text in parentheses
+      .trim();
+
+    // Make API request to Spoonacular
+    const response = await fetch(
+      `https://api.spoonacular.com/recipes/complexSearch?query=${encodeURIComponent(
+        cleanTitle
+      )}&number=1&apiKey=${process.env.SPOONACULAR_API_KEY}`
+    );
+
+    if (!response.ok) {
+      console.error('Spoonacular API error:', response.status);
+      throw new Error(`Spoonacular API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(
+      'Spoonacular response:',
+      data.results ? 'Got results' : 'No results'
+    );
+
+    if (data.results && data.results.length > 0) {
+      // Return the image URL from the first result
+      return data.results[0].image;
+    }
+
+    // Fall back to Unsplash if no results
+    throw new Error('No recipe images found');
+  } catch (error) {
+    console.error('Error fetching from Spoonacular:', error);
+
+    // Fix the error by creating a proper Recipe object
+    // and passing the correct arguments to getRecipeImage
+    const recipeObj: Recipe = {
+      title: recipeTitle,
+      ingredients: [],
+      instructions: '',
+      source: 'fallback',
+      imageUrl: '',
+    };
+
+    // Call getRecipeImage with proper parameters,
+    return getRecipeImage(recipeObj, index);
+  }
 }
