@@ -1,14 +1,4 @@
-<<<<<<< Updated upstream
-"use client"
-import { useState } from 'react';
-import { Plus } from "lucide-react";
-import Link from "next/link";
-import type { ReactNode } from "react";
-import styles from "./Mobile-layout.module.css";
-import type { FoodItemType } from '../types/food-item';
-=======
 'use client';
->>>>>>> Stashed changes
 
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
