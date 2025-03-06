@@ -280,98 +280,59 @@ a.secondary {
 .scrollParent {
   position: relative;
   width: 100vw;
-  height: 10rem;
+  height: 12rem;
   overflow-x: hidden;
 }
 
 .scrollElementPrimary,
-.scrollElementSecondary,
-.scrollElementTertiary {
+.scrollElementSecondary {
   position: absolute;
   height: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 4rem;
-}
-
-.scrollElementPrimary img,
-.scrollElementSecondary img,
-.scrollElementTertiary img {
-  width: auto;
-  height: 125px;
-  flex-shrink: 0;
+  gap: 2rem;
 }
 
 .scrollElementPrimary {
-  animation: scrollPrimary 18s linear infinite;
-  left: 100%;
-}
-
-.scrollElementSecondary {
-  animation: scrollSecondary 10s linear infinite;
-  left: 200%;
-}
-
-.scrollElementTertiary {
-  animation: scrollTertiary 10s linear infinite;
-  left: 300%;
+  animation: scrollPrimary 15s linear infinite;
+  left: 100vw;
 }
 
 @keyframes scrollPrimary {
   0% {
-    left: -40%;
+    left: 100vw; /* Start further right */
   }
   100% {
-    left: -140%; /* Move further left before resetting */
+    left: -35vw; /* End further left */
   }
 }
 
-@keyframes scrollSecondary {
-  0% {
-    left: 40%; /* Start after primary element */
-  }
-  100% {
-    left: -60%; /* Stop before fully exiting */
-  }
-}
-
-@keyframes scrollTertiary {
-  0% {
-    left: 120%;
-  }
-  100% {
-    left: 20%;
-  }
-}
-
-/* Add responsive adjustments */
-@media (max-width: 768px) {
+/* Update mobile styles */
+@media (max-width: 480px) {
   .scrollParent {
     height: 8rem;
   }
 
-  .scrollElementPrimary img,
-  .scrollElementSecondary img,
-  .scrollElementTertiary img {
-    height: 120px;
+  .scrollElementPrimary {
+    gap: 0.5rem; /* Reduced gap for mobile */
+    animation: scrollPrimaryMobile 8s linear infinite;
   }
 
-  .scrollElementPrimary,
-  .scrollElementSecondary,
-  .scrollElementTertiary {
-    gap: 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .scrollParent {
-    height: 6rem;
+  .scrollElementPrimary img {
+    height: 150px; /* Smaller images for mobile */
   }
 
-  .scrollElementPrimary img,
-  .scrollElementSecondary img,
-  .scrollElementTertiary img {
-    height: 120px;
+  .scrollElementSecondary {
+    display: none; /* Hide secondary element on mobile */
+  }
+
+  @keyframes scrollPrimaryMobile {
+    0% {
+      left: 100vw;
+    }
+    100% {
+      left: -140vw;
+    }
   }
 }
