@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
@@ -8,40 +8,53 @@ import { FoodItemType } from '../types/food-item';
 import { foodItems as initialFoodItems } from '../data/food-items';
 import { FoodItem } from '../components/food-item';
 
+// First, update your DbRecipe interface to match the actual database schema:
+interface DbRecipe {
+  id: number;
+  name: string;
+  cuisine: string;
+  ingredients_lowercase: string;
+  imageUrl?: string;
+  // Add other fields that are actually in your database
+  // Leave out fields that don't exist in the database
+}
+
 // Define the Recipe type
 interface Recipe {
   id: number;
   name: string;
   cuisine: string;
-  dietaryInfoType: string;
-  dietaryInfoRestrictions: string;
-  dietaryInfoSuitableFor: string;
-  dietaryInfoAllergens: string;
-  dietaryInfoVeganSubstitutions: string | null;
-  dietaryInfoGlutenFreeOption: string | null;
-  dietaryInfoProteinSource: string | null;
-  dietaryInfoNutrientDense: string | null;
-  dietaryInfoTraditionalDish: string | null;
-  ingredients: string[];
-  steps: string[];
-  cookingUtensils: string[];
-  nutritionalInfoServings: number;
-  nutritionalInfoCaloriesPerServing: number;
-  nutritionalInfoProteinPerServing: number;
-  nutritionalInfoCarbsPerServing: number;
-  nutritionalInfoFatPerServing: number;
-  nutritionalInfoFiber: number;
-  nutritionalInfoCholesterol: number | null;
-  imageUrl: string;
-  prepTime: string;
-  cookTime: string;
-  ingredientsLowercase: string[];
+  imageUrl?: string;
+  match_count?: number;
+
+  // Make all these fields optional with ? since they might not be in your DB records
+  dietaryInfoType?: string;
+  dietaryInfoRestrictions?: string;
+  dietaryInfoSuitableFor?: string;
+  dietaryInfoAllergens?: string;
+  dietaryInfoVeganSubstitutions?: string | null;
+  dietaryInfoGlutenFreeOption?: string | null;
+  dietaryInfoProteinSource?: string | null;
+  dietaryInfoNutrientDense?: string | null;
+  dietaryInfoTraditionalDish?: string | null;
+  ingredients?: string[];
+  steps?: string[];
+  cookingUtensils?: string[];
+  nutritionalInfoServings?: number;
+  nutritionalInfoCaloriesPerServing?: number;
+  nutritionalInfoProteinPerServing?: number;
+  nutritionalInfoCarbsPerServing?: number;
+  nutritionalInfoFatPerServing?: number;
+  nutritionalInfoFiber?: number;
+  nutritionalInfoCholesterol?: number | null;
+  prepTime?: string;
+  cookTime?: string;
+  ingredientsLowercase?: string[];
 }
 
 // Initialize Supabase client (replace with your actual Supabase URL and key)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -49,19 +62,20 @@ export default function RecipesPage() {
   const [topMatches, setTopMatches] = useState<Recipe[]>([]);
   const [otherMatches, setOtherMatches] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
-  const [foodItems, setFoodItems] = useState<FoodItemType[]>([]);
+  const [foodItems, setFoodItems] = useState<FoodItemType[]>([]); // Function to fetch food items
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // Function to fetch food items
   const refreshItems = async () => {
     try {
       setLoading(true);
       const response = await fetch('/api/supabaseRoute');
-      console.log(JSON.stringify(response,null,2))
+      console.log(JSON.stringify(response, null, 2));
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`API error (${response.status}): ${errorText}`);
-        throw new Error(`Failed to fetch data: ${response.status} ${errorText}`);
+        throw new Error(
+          `Failed to fetch data: ${response.status} ${errorText}`
+        );
       }
 
       const data = await response.json();
@@ -75,23 +89,22 @@ export default function RecipesPage() {
     }
   };
 
-    useEffect(() => {
-      refreshItems();
-    }, []);
-  
+  useEffect(() => {
+    refreshItems();
+  }, []);
 
-  function cleanIngredientsData(ingredients: Array<{name: string, expiry_date: string}>) {
-    return ingredients.map(ingredient => ({
+  function cleanIngredientsData(
+    ingredients: FoodItemType[]
+  ): { name: string; expiry_date: string }[] {
+    return ingredients.map((ingredient) => ({
       name: ingredient.name.toLowerCase(),
-      expiry_date: ingredient.expiry_date.split(' ')[0] // or .slice(0, 10)
+      expiry_date: ingredient.expiry_date.split(' ')[0], // or .slice(0, 10)
     }));
   }
 
   useEffect(() => {
     if (foodItems.length === 0) return; // Don't run if no food items
-
     const clean_dummy = cleanIngredientsData(foodItems);
-    console.log('Cleaned food items:', clean_dummy);
 
     async function fetchRecipes() {
       try {
@@ -100,54 +113,83 @@ export default function RecipesPage() {
           .select('*');
 
         if (error) throw error;
-        console.log("test1")
-        console.log(allRecipes)
-     
-      // Process recipes to count matches
-      const processedRecipes = allRecipes.map(recipe => {
-        let matchCount = 0;
-        
-        try {
-          const ingredientsArray = recipe.ingredients_lowercase.split(',')
-            .map(ing => ing.trim()); // trim whitespace
-          console.log('Recipe ingredients:', ingredientsArray);
-          
-          // Extract just the names from clean_dummy
-          const cleanedIngredientNames = clean_dummy.map(item => item.name);
-          console.log('Cleaned ingredients to match:', cleanedIngredientNames);
-      
-          // Count matches
-          matchCount = cleanedIngredientNames.filter(cleanName => 
-            ingredientsArray.some(recipeIng => recipeIng.includes(cleanName))
-          ).length;
-          
-          console.log(`Recipe ${recipe.name} match count:`, matchCount);
-        } catch (e) {
-          console.error(`Error processing recipe ${recipe.id}:`, e);
-        }
-        
-        return { ...recipe, match_count: matchCount };
-      });
-      
-      console.log("test3")
-      // Sort by match count and take top 4
-      const topData = processedRecipes
-        .filter(recipe => recipe.match_count > 0)
-        .sort((a, b) => b.match_count - a.match_count)
-        .slice(0, 4);
-        if (error) throw error;
-        // Fetch other suggestions (next 10 recipes)
+
+        // Cast to DbRecipe[] first
+        const dbRecipes = allRecipes as DbRecipe[];
+
+        // Process and cast to Recipe[]
+        const processedRecipes: Recipe[] = dbRecipes.map((recipe) => {
+          let matchCount = 0;
+
+          try {
+            // Your existing match count logic
+            if (
+              recipe.ingredients_lowercase &&
+              typeof recipe.ingredients_lowercase === 'string'
+            ) {
+              const ingredientsArray = recipe.ingredients_lowercase
+                .split(',')
+                .map((ing: string) => ing.trim());
+              const cleanedIngredientNames = clean_dummy.map(
+                (item) => item.name
+              );
+              matchCount = cleanedIngredientNames.filter(
+                (cleanName) =>
+                  ingredientsArray.some((recipeIng: string) =>
+                    recipeIng.includes(cleanName)
+                  )
+              ).length;
+            } else {
+              console.warn(
+                `Recipe ${recipe.id} has invalid ingredients_lowercase:`,
+                recipe.ingredients_lowercase
+              );
+            }
+          } catch (e) {
+            console.error(`Error processing recipe ${recipe.id}:`, e);
+          }
+
+          // Return properly typed Recipe object
+          return {
+            id: recipe.id,
+            name: recipe.name,
+            cuisine: recipe.cuisine,
+            imageUrl: recipe.imageUrl || undefined,
+            match_count: matchCount,
+            // Any other fields that are in your DB records
+          };
+        });
+
+        const topData = processedRecipes
+          .filter((recipe) => (recipe.match_count ?? 0) > 0) // Handle undefined with nullish coalescing
+          .sort((a, b) => (b.match_count ?? 0) - (a.match_count ?? 0)) // Handle undefined when sorting
+          .slice(0, 4);
+
+        // Similarly for otherData:
         const { data: otherData, error: otherError } = await supabase
           .from('recipes')
           .select('*')
-          // .order('expiry_matches', { ascending: false })
-          .range(4, 12); // Skip the first 3 (top matches) and get the next 10
-          console.log(otherData)
+          .range(4, 12);
+
         if (otherError) throw otherError;
-        console.log(`topData:`, JSON.stringify(topData,null,2))
-        console.log(`otherData:`, JSON.stringify(otherData,null,2))
+
+        // Process and cast otherData too
+        const processedOtherData: Recipe[] = (
+          otherData as DbRecipe[]
+        ).map((recipe) => {
+          // Similar processing as above if needed
+          return {
+            id: recipe.id,
+            name: recipe.name,
+            cuisine: recipe.cuisine,
+            imageUrl: recipe.imageUrl || undefined,
+            match_count: 0, // Default match count for other recipes
+            // Any other fields that are in your DB records
+          };
+        });
+
         setTopMatches(topData || []);
-        setOtherMatches(otherData || []);
+        setOtherMatches(processedOtherData || []);
       } catch (error) {
         console.error('Error fetching recipes:', error);
       } finally {
@@ -161,7 +203,10 @@ export default function RecipesPage() {
   // Scroll functions for the carousel
   const scrollLeft = () => {
     if (carouselRef.current) {
-      carouselRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+      carouselRef.current.scrollBy({
+        left: -200,
+        behavior: 'smooth',
+      });
     }
   };
 
@@ -173,82 +218,83 @@ export default function RecipesPage() {
 
   return (
     <MobileLayout>
-    <div className={styles.container}>
-      {/* Top Matches Section */}
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Top Matches:</h2>
-        
-        {loading ? (
-          <p>Loading top matches...</p>
-        ) : topMatches.length > 0 ? (
-          <div className={styles.cardsContainer}>
-            {topMatches.map((recipe) => (
-              <RecipeCard 
-                key={recipe.id} 
-                recipe={recipe} 
-                cardColor="orange"
-              />
-            ))}
-          </div>
-        ) : (
-          <p className={styles.noMatches}>No matching recipes...</p>
-        )}
-      </section>
-
-      {/* Other Matches Section */}
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>More Recipes:</h2>
-        
-        {loading ? (
-          <p>Loading suggestions...</p>
-        ) : otherMatches.length > 0 ? (
-          <div className={styles.carouselContainer}>
-            <button 
-              className={`${styles.carouselButton} ${styles.leftButton}`}
-              onClick={scrollLeft}
-              aria-label="Scroll left"
-            >
-              &lt;
-            </button>
-            
-            <div className={styles.carousel} ref={carouselRef}>
-              {otherMatches.map((recipe) => (
-                <RecipeCard 
-                  key={recipe.id} 
+      <div className={styles.container}>
+        {/* Top Matches Section */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Top Matches:</h2>
+          {loading ? (
+            <p>Loading top matches...</p>
+          ) : topMatches.length > 0 ? (
+            <div className={styles.cardsContainer}>
+              {topMatches.map((recipe) => (
+                <RecipeCard
+                  key={recipe.id}
                   recipe={recipe}
-                  cardColor="teal"
+                  cardColor="orange"
                 />
               ))}
             </div>
-            
-            <button 
-              className={`${styles.carouselButton} ${styles.rightButton}`}
-              onClick={scrollRight}
-              aria-label="Scroll right"
-            >
-              &gt;
-            </button>
-          </div>
-        ) : (
-          <p className={styles.noMatches}>No additional suggestions...</p>
-        )}
-      </section>
+          ) : (
+            <p className={styles.noMatches}>No matching recipes...</p>
+          )}
+        </section>
 
-      {/* Bottom Action Buttons */}
-      <section className={styles.actionsSection}>
-        <Link href="/fullrecipelist" className={styles.actionButton}>
-          <div className={styles.fullDatabaseBtn}>
-            Full Recipe Database
-          </div>
-        </Link>
-        
-        <Link href="/ai" className={styles.actionButton}>
-          <div className={styles.aiSuggestionBtn}>
-            AI Suggestion
-          </div>
-        </Link>
-      </section>
-    </div>
+        {/* Other Matches Section */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>More Recipes:</h2>
+          {loading ? (
+            <p>Loading suggestions...</p>
+          ) : otherMatches.length > 0 ? (
+            <div className={styles.carouselContainer}>
+              <button
+                className={`${styles.carouselButton} ${styles.leftButton}`}
+                onClick={scrollLeft}
+                aria-label="Scroll left"
+              >
+                &lt;
+              </button>
+              <div className={styles.carousel} ref={carouselRef}>
+                {otherMatches.map((recipe) => (
+                  <RecipeCard
+                    key={recipe.id}
+                    recipe={recipe}
+                    cardColor="teal"
+                  />
+                ))}
+              </div>
+              <button
+                className={`${styles.carouselButton} ${styles.rightButton}`}
+                onClick={scrollRight}
+                aria-label="Scroll right"
+              >
+                &gt;
+              </button>
+            </div>
+          ) : (
+            <p className={styles.noMatches}>
+              No additional suggestions...
+            </p>
+          )}
+        </section>
+
+        {/* Bottom Action Buttons */}
+        <section className={styles.actionsSection}>
+          <Link
+            href="/fullrecipelist"
+            className={styles.actionButton}
+          >
+            <div className={styles.fullDatabaseBtn}>
+              Full Recipe Database
+            </div>
+          </Link>
+
+          <Link href="/ai" className={styles.actionButton}>
+            <div className={styles.aiSuggestionBtn}>
+              AI Suggestion
+            </div>
+          </Link>
+        </section>
+      </div>
     </MobileLayout>
   );
 }
@@ -260,14 +306,13 @@ interface RecipeCardProps {
 }
 
 function RecipeCard({ recipe, cardColor }: RecipeCardProps) {
-  const cardClass = cardColor === 'orange' 
-    ? styles.orangeCard 
-    : styles.tealCard;
+  const cardClass =
+    cardColor === 'orange' ? styles.orangeCard : styles.tealCard;
 
   // Truncate title if longer than 25 characters
   const truncateTitle = (title: string, maxLength: number = 25) => {
-    return title.length > maxLength 
-      ? `${title.substring(0, maxLength)}...` 
+    return title.length > maxLength
+      ? `${title.substring(0, maxLength)}...`
       : title;
   };
 
@@ -275,9 +320,9 @@ function RecipeCard({ recipe, cardColor }: RecipeCardProps) {
     <div className={`${styles.recipeCard} ${cardClass}`}>
       <div className={styles.recipeImageContainer}>
         {recipe.imageUrl ? (
-          <img 
-            src={recipe.imageUrl} 
-            alt={recipe.name} 
+          <img
+            src={recipe.imageUrl}
+            alt={recipe.name}
             className={styles.recipeImage}
           />
         ) : (
@@ -292,7 +337,11 @@ function RecipeCard({ recipe, cardColor }: RecipeCardProps) {
           {truncateTitle(recipe.name)}
         </h3>
         <p className={styles.recipeMatches}>
+<<<<<<< Updated upstream
           Ingredients used: <span>{recipe.match_count == null? 0:recipe.match_count}</span>
+=======
+          Ingredients used: <span>{recipe.match_count ?? 0}</span>
+>>>>>>> Stashed changes
         </p>
       </div>
     </div>

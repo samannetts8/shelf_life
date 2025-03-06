@@ -1,15 +1,33 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
-import { HfInference } from "@huggingface/inference";
-import { FoodItemType } from "../../types/food-item";
-import OpenAI from "openai";
+import { NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
+import { HfInference } from '@huggingface/inference';
+import { FoodItemType } from '../../types/food-item';
+import OpenAI from 'openai';
+
+// Create an interface for your recipe structure
+
+// First add this interface near the top of your file:
+interface Recipe {
+  title: string;
+  ingredients: string[];
+  instructions: string;
+  emoji: string;
+  source: string;
+  tip?: string;
+  imageUrl?: string;
+  matchScore?: number;
+  matchPercentage?: number;
+  id?: number | string;
+}
 
 export async function getAiRecipes(ingredients: FoodItemType[]) {
-  console.log("Getting recipes from HuggingFace AI using ingredients");
+  console.log(
+    'Getting recipes from HuggingFace AI using ingredients'
+  );
   let ingredientsArray = ingredients.map((item) => item.name);
   const prompt = `
 You are a helpful AI chef. Please create a detailed and structured recipe using the following ingredients: ${ingredientsArray.join(
-    ", "
+    ', '
   )}.
 
 Return the recipe as a JSON object with the following structure:
@@ -32,23 +50,23 @@ Return the recipe as a JSON object with the following structure:
     });
 
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: 'gpt-3.5-turbo',
       messages: [
         {
-          role: "system",
+          role: 'system',
           content:
-            "You are a helpful chef assistant that responds in JSON format.",
+            'You are a helpful chef assistant that responds in JSON format.',
         },
         {
-          role: "user",
+          role: 'user',
           content: prompt,
         },
       ],
-      response_format: { type: "json_object" },
+      response_format: { type: 'json_object' },
       temperature: 0.7,
     });
     let generatedText = response.choices[0].message.content;
-    console.log("Generated Text:", generatedText);
+    console.log('Generated Text:', generatedText);
     return [
       {
         recipeDetails: generatedText,
@@ -56,11 +74,11 @@ Return the recipe as a JSON object with the following structure:
       },
     ];
   } catch (err) {
-    console.error("Error fetching from Hugging Face AI", err);
+    console.error('Error fetching from Hugging Face AI', err);
   }
   return [
     {
-      recipeDetails: "Could not generate AI recipe suggestions",
+      recipeDetails: 'Could not generate AI recipe suggestions',
       foodList: ingredients,
     },
   ];
@@ -72,12 +90,12 @@ export async function POST(request: Request) {
 
     if (!ingredients) {
       return NextResponse.json(
-        { error: "No ingredients provided" },
+        { error: 'No ingredients provided' },
         { status: 400 }
       );
     }
 
-    console.log("Generating recipes for ingredients:", ingredients);
+    console.log('Generating recipes for ingredients:', ingredients);
 
     const supabase = await createClient();
 
@@ -88,23 +106,26 @@ export async function POST(request: Request) {
     } = await supabase.auth.getUser();
 
     if (userError || !user) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      );
     }
 
     // Parse ingredient strings into a cleaner format
     function parseIngredients(ingredientText: string) {
-      return ingredientText.split(",").map((item) => item.trim());
+      return ingredientText.split(',').map((item) => item.trim());
     }
 
     const ingredientList = parseIngredients(ingredients);
 
     // STEP 1: Search database for recipes with matching ingredients
     const { data: dbRecipes, error: dbError } = await supabase
-      .from("recipes")
-      .select("*");
+      .from('recipes')
+      .select('*');
 
     if (dbError) {
-      console.error("Error fetching recipes from database:", dbError);
+      console.error('Error fetching recipes from database:', dbError);
     }
 
     let matchingRecipes = [];
@@ -115,13 +136,15 @@ export async function POST(request: Request) {
       // Calculate match scores for each recipe
       const scoredRecipes = dbRecipes.map((recipe) => {
         let matchCount = 0;
-        let recipeIngredients = "";
+        let recipeIngredients = '';
 
         // Handle different recipe formats (ingredients could be string or array)
-        if (typeof recipe.ingredients === "string") {
+        if (typeof recipe.ingredients === 'string') {
           recipeIngredients = recipe.ingredients.toLowerCase();
         } else if (Array.isArray(recipe.ingredients)) {
-          recipeIngredients = recipe.ingredients.join(" ").toLowerCase();
+          recipeIngredients = recipe.ingredients
+            .join(' ')
+            .toLowerCase();
         }
 
         // Count matching ingredients
@@ -146,7 +169,9 @@ export async function POST(request: Request) {
         .sort((a, b) => b.matchScore - a.matchScore);
 
       numDbRecipes = Math.min(matchingRecipes.length, 3);
-      console.log(`Found ${numDbRecipes} matching recipes in database`);
+      console.log(
+        `Found ${numDbRecipes} matching recipes in database`
+      );
     }
 
     // Format database recipes to match our response format
@@ -156,12 +181,14 @@ export async function POST(request: Request) {
         title: recipe.title,
         ingredients: Array.isArray(recipe.ingredients)
           ? recipe.ingredients
-          : recipe.ingredients.split(",").map((i: string) => i.trim()),
+          : recipe.ingredients
+              .split(',')
+              .map((i: string) => i.trim()),
         instructions: recipe.instructions,
-        emoji: recipe.emoji || "🍲",
+        emoji: recipe.emoji || '🍲',
         matchScore: recipe.matchScore,
         matchPercentage: recipe.matchPercentage,
-        source: "database",
+        source: 'database',
         id: recipe.id,
       }));
 
@@ -174,18 +201,19 @@ export async function POST(request: Request) {
     const numAiRecipesNeeded = 3;
     console.log(`Generating ${numAiRecipesNeeded} AI recipes`);
 
-    let aiRecipes = [];
+    // Update to include the type:
+    let aiRecipes: Recipe[] = [];
 
     try {
       // Try with the correct authentication method
-      console.log("Initializing HuggingFace client");
+      console.log('Initializing HuggingFace client');
 
       // Create more robust HF initialization
       const hfToken = process.env.HUGGINGFACE_API_TOKEN;
 
       if (!hfToken) {
-        console.error("HuggingFace API token is not set");
-        throw new Error("Missing HuggingFace API token");
+        console.error('HuggingFace API token is not set');
+        throw new Error('Missing HuggingFace API token');
       }
 
       const hf = new HfInference(hfToken);
@@ -195,7 +223,7 @@ export async function POST(request: Request) {
 
       const prompt = `
 You are a helpful AI chef. Please create a detailed and structured recipe using the following ingredients: ${ingredientsArray.join(
-        ", "
+        ', '
       )}.
 
 Return the recipe as a JSON object with the following structure:
@@ -211,7 +239,7 @@ Return the recipe as a JSON object with the following structure:
 }
 `.trim();
 
-      console.log("Calling HuggingFace API...");
+      console.log('Calling HuggingFace API...');
 
       // Try with a more capable model (Mistral-7B-Instruct-v0.1)
       const openai = new OpenAI({
@@ -219,40 +247,48 @@ Return the recipe as a JSON object with the following structure:
       });
 
       const response = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
+        model: 'gpt-3.5-turbo',
         messages: [
           {
-            role: "system",
+            role: 'system',
             content:
-              "You are a helpful chef assistant that responds in JSON format.",
+              'You are a helpful chef assistant that responds in JSON format.',
           },
           {
-            role: "user",
+            role: 'user',
             content: prompt,
           },
         ],
-        response_format: { type: "json_object" },
+        response_format: { type: 'json_object' },
         temperature: 0.7,
       });
       const generatedText = response.choices[0].message.content;
-      console.log("Generated Text:", generatedText);
+      console.log('Generated Text:', generatedText);
 
-      console.log("Received response from OpenAI");
-      console.log("Raw OpenAI Response:", response);
-      console.log("Generated Text:", response.choices[0].message.content);
+      console.log('Received response from OpenAI');
+      console.log('Raw OpenAI Response:', response);
+      console.log(
+        'Generated Text:',
+        response.choices[0].message.content
+      );
 
       // Try to parse the response
       if (generatedText) {
-        aiRecipes = parseGeneratedRecipes(generatedText, numAiRecipesNeeded);
+        aiRecipes = parseGeneratedRecipes(
+          generatedText,
+          numAiRecipesNeeded
+        );
       } else {
-        console.error("Generated text is null");
+        console.error('Generated text is null');
         aiRecipes = [];
       }
-      console.log(`Successfully parsed ${aiRecipes.length} AI recipes`);
+      console.log(
+        `Successfully parsed ${aiRecipes.length} AI recipes`
+      );
 
       // If we couldn't parse enough recipes, use fallbacks
       if (aiRecipes.length < numAiRecipesNeeded) {
-        console.log("Not enough recipes parsed, adding fallbacks");
+        console.log('Not enough recipes parsed, adding fallbacks');
         const fallbackRecipes = generateFallbackRecipes(
           ingredientList,
           numAiRecipesNeeded - aiRecipes.length
@@ -260,11 +296,14 @@ Return the recipe as a JSON object with the following structure:
         aiRecipes = [...aiRecipes, ...fallbackRecipes];
       }
     } catch (aiError) {
-      console.error("Error generating AI recipes:", aiError);
-      console.log("Using fallback recipes instead");
+      console.error('Error generating AI recipes:', aiError);
+      console.log('Using fallback recipes instead');
 
       // Use fallback recipes instead of failing
-      aiRecipes = generateFallbackRecipes(ingredientList, numAiRecipesNeeded);
+      aiRecipes = generateFallbackRecipes(
+        ingredientList,
+        numAiRecipesNeeded
+      );
     }
 
     // Combine database and AI recipes
@@ -272,28 +311,31 @@ Return the recipe as a JSON object with the following structure:
 
     // Save recipe request to history (optional)
     try {
-      await supabase.from("recipe_history").insert({
+      await supabase.from('recipe_history').insert({
         user_id: user.id,
         ingredients: ingredients,
         created_at: new Date().toISOString(),
       });
     } catch (historyError) {
-      console.error("Error saving recipe history:", historyError);
+      console.error('Error saving recipe history:', historyError);
       // Continue even if history saving fails
     }
 
     return NextResponse.json({ recipes: allRecipes });
   } catch (error) {
-    console.error("Error generating recipes:", error);
+    console.error('Error generating recipes:', error);
     return NextResponse.json(
-      { error: "Failed to generate recipes" },
+      { error: 'Failed to generate recipes' },
       { status: 500 }
     );
   }
 }
 
 // Replace your parseGeneratedRecipes function with this one
-function parseGeneratedRecipes(generatedText: string, numRecipes: number) {
+function parseGeneratedRecipes(
+  generatedText: string,
+  numRecipes: number
+) {
   try {
     // Try parsing the response as JSON first
     const jsonResponse = JSON.parse(generatedText);
@@ -309,11 +351,15 @@ function parseGeneratedRecipes(generatedText: string, numRecipes: number) {
           title: jsonResponse.title,
           ingredients: Array.isArray(jsonResponse.ingredients)
             ? jsonResponse.ingredients
-            : jsonResponse.ingredients.split("\n"),
+            : jsonResponse.ingredients.split('\n'),
           instructions: jsonResponse.instructions,
-          emoji: jsonResponse.emoji || "🍳",
-          tip: jsonResponse.tip || "",
-          source: "ai",
+          emoji: jsonResponse.emoji || '🍳',
+          tip: jsonResponse.tip || '',
+          source: 'ai',
+          // Add emoji-based placeholder image
+          imageUrl: getEmojiImagePlaceholder(
+            jsonResponse.emoji || '🍳'
+          ),
         },
       ];
     }
@@ -322,7 +368,7 @@ function parseGeneratedRecipes(generatedText: string, numRecipes: number) {
     // fall back to the regex parsing
     return parseWithRegex(generatedText, numRecipes);
   } catch (error) {
-    console.error("Error parsing JSON response:", error);
+    console.error('Error parsing JSON response:', error);
     // If JSON parsing fails, try the regex approach
     return parseWithRegex(generatedText, numRecipes);
   }
@@ -342,12 +388,14 @@ function parseWithRegex(generatedText: string, numRecipes: number) {
     recipes.push({
       title: title.trim(),
       ingredients: ingredients
-        .split("\n")
-        .map((i: string) => i.replace(/^- /, "").trim())
+        .split('\n')
+        .map((i: string) => i.replace(/^- /, '').trim())
         .filter(Boolean),
       instructions: instructions.trim(),
       emoji: emoji.trim(),
-      source: "ai",
+      source: 'ai',
+      // Add emoji-based placeholder image
+      imageUrl: getEmojiImagePlaceholder(emoji.trim() || '🍳'),
     });
   }
   return recipes;
@@ -355,76 +403,79 @@ function parseWithRegex(generatedText: string, numRecipes: number) {
 
 // Update the generateFallbackRecipes function:
 
-function generateFallbackRecipes(ingredients: string[], count: number) {
+function generateFallbackRecipes(
+  ingredients: string[],
+  count: number
+) {
   // Generate hardcoded recipes based on the ingredients
   const recipes = [];
 
   // Template recipes that can work with any ingredients
   const templates = [
     {
-      title: (ing: string[]) => `${ing[0] || "Quick"} Stir Fry`,
+      title: (ing: string[]) => `${ing[0] || 'Quick'} Stir Fry`,
       ingredients: (ing: string[]) => [
         ...ing,
-        "2 tablespoons vegetable oil",
-        "2 cloves garlic, minced",
-        "1 tablespoon soy sauce",
-        "1 teaspoon sesame oil",
-        "Salt and pepper to taste",
+        '2 tablespoons vegetable oil',
+        '2 cloves garlic, minced',
+        '1 tablespoon soy sauce',
+        '1 teaspoon sesame oil',
+        'Salt and pepper to taste',
       ],
       instructions: (ing: string[]) =>
         `
 1. Heat vegetable oil in a large pan over medium-high heat.
 2. Add garlic and sauté for 30 seconds until fragrant.
-3. Add ${ing[0] || "ingredients"} and cook for 2-3 minutes.
+3. Add ${ing[0] || 'ingredients'} and cook for 2-3 minutes.
 4. Add ${
-          ing[1] || "remaining ingredients"
+          ing[1] || 'remaining ingredients'
         } and stir-fry for another 3-5 minutes.
 5. Add soy sauce and sesame oil, then season with salt and pepper.
 6. Serve hot over rice or noodles.
       `.trim(),
-      emoji: "🥘",
+      emoji: '🥘',
     },
     {
-      title: (ing: string[]) => `${ing[0] || "Simple"} Soup`,
+      title: (ing: string[]) => `${ing[0] || 'Simple'} Soup`,
       ingredients: (ing: string[]) => [
         ...ing,
-        "1 onion, diced",
-        "4 cups vegetable or chicken broth",
-        "1 tablespoon olive oil",
-        "Salt and pepper to taste",
-        "Fresh herbs for garnish",
+        '1 onion, diced',
+        '4 cups vegetable or chicken broth',
+        '1 tablespoon olive oil',
+        'Salt and pepper to taste',
+        'Fresh herbs for garnish',
       ],
       instructions: (ing: string[]) =>
         `
 1. Heat olive oil in a pot over medium heat.
 2. Add diced onion and sauté until translucent.
-3. Add ${ing[0] || "ingredients"} and cook for 2 minutes.
+3. Add ${ing[0] || 'ingredients'} and cook for 2 minutes.
 4. Pour in broth and bring to a boil.
 5. Reduce heat and simmer for 15-20 minutes.
 6. Season with salt and pepper.
 7. Garnish with fresh herbs and serve.
       `.trim(),
-      emoji: "🍲",
+      emoji: '🍲',
     },
     {
-      title: (ing: string[]) => `${ing[0] || "Fresh"} Salad`,
+      title: (ing: string[]) => `${ing[0] || 'Fresh'} Salad`,
       ingredients: (ing: string[]) => [
         ...ing,
-        "Mixed salad greens",
-        "2 tablespoons olive oil",
-        "1 tablespoon vinegar or lemon juice",
-        "1 teaspoon honey or sugar",
-        "Salt and pepper to taste",
+        'Mixed salad greens',
+        '2 tablespoons olive oil',
+        '1 tablespoon vinegar or lemon juice',
+        '1 teaspoon honey or sugar',
+        'Salt and pepper to taste',
       ],
       instructions: (ing: string[]) =>
         `
 1. Prepare all ingredients.
-2. Combine ${ing.join(", ")} with salad greens in a large bowl.
+2. Combine ${ing.join(', ')} with salad greens in a large bowl.
 3. In a small bowl, whisk together olive oil, vinegar, honey, salt and pepper.
 4. Pour dressing over ingredients and toss to coat.
 5. Serve immediately or chill before serving.
       `.trim(),
-      emoji: "🥗",
+      emoji: '🥗',
     },
   ];
 
@@ -437,9 +488,38 @@ function generateFallbackRecipes(ingredients: string[], count: number) {
       ingredients: template.ingredients(ingredients).filter(Boolean), // Remove any null/undefined items
       instructions: template.instructions(ingredients),
       emoji: template.emoji,
-      source: "fallback",
+      source: 'fallback',
+      // Add emoji-based placeholder image
+      imageUrl: getEmojiImagePlaceholder(template.emoji),
     });
   }
 
   return recipes;
+}
+
+// Add this function to your file before calling it:
+
+// Function to generate image URLs based on recipe emojis
+function getEmojiImagePlaceholder(emoji: string): string {
+  // Map of emojis to image URLs
+  const emojiImageMap: Record<string, string> = {
+    '🍲': '/images/recipes/soup.jpg',
+    '🍛': '/images/recipes/curry.jpg',
+    '🍝': '/images/recipes/pasta.jpg',
+    '🥘': '/images/recipes/stir-fry.jpg',
+    '🍜': '/images/recipes/noodles.jpg',
+    '🥗': '/images/recipes/salad.jpg',
+    '🍕': '/images/recipes/pizza.jpg',
+    '🌮': '/images/recipes/tacos.jpg',
+    '🍔': '/images/recipes/burger.jpg',
+    '🍳': '/images/recipes/breakfast.jpg',
+    '🥪': '/images/recipes/sandwich.jpg',
+    '🍖': '/images/recipes/meat.jpg',
+    '🍗': '/images/recipes/chicken.jpg',
+    '🍚': '/images/recipes/rice.jpg',
+    '🍰': '/images/recipes/dessert.jpg',
+  };
+
+  // Default image if no match
+  return emojiImageMap[emoji] || '/images/recipes/default.jpg';
 }
