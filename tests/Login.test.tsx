@@ -1,87 +1,80 @@
-import { vi, describe, it, expect } from 'vitest';
-import { login, signup } from '../src/app/login/actions';  // Adjust import path
-import { createClient } from '../src/app/utils/supabase/server';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
+import React from 'react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { LoginForm } from '../src/app/components/login-form'; // Update the import path
+import { useAuth } from '../src/app/hooks/use-auth';
 
-// Mock the dependencies
-vi.mock('../utils/supabase/server', () => ({
-  createClient: vi.fn(),
+vi.mock('../hooks/use-auth', () => ({
+  useAuth: vi.fn(),
 }));
 
-vi.mock('next/cache', () => ({
-  revalidatePath: vi.fn(),
-}));
+describe('LoginForm Component', () => {
+  let mockLogin, mockRegister;
 
-vi.mock('next/navigation', () => ({
-  redirect: vi.fn(),
-}));
-
-describe('Auth Functions', () => {
-  
-  it('should call revalidatePath and redirect on successful login', async () => {
-    // Mocking the response of createClient and signInWithPassword
-    const mockSupabase = {
-      auth: {
-        signInWithPassword: vi.fn().mockResolvedValue({ error: null }),
-      },
-    };
-    createClient.mockResolvedValue(mockSupabase);
-
-    // Mock formData for login
-    const formData = new FormData();
-    formData.append('email', 'test@example.com');
-    formData.append('password', 'password123');
-
-    await login(formData);
-
-    // Check that revalidatePath and redirect were called
-    expect(revalidatePath).toHaveBeenCalledWith('/dashboard', 'layout');
-    expect(redirect).toHaveBeenCalledWith('/dashboard');
+  beforeEach(() => {
+    mockLogin = vi.fn();
+    mockRegister = vi.fn();
+    useAuth.mockReturnValue({
+      login: mockLogin,
+      register: mockRegister,
+      isLoading: false,
+    });
   });
 
-  it('should return an error when login fails', async () => {
-    // Mocking the response of createClient and signInWithPassword
-    const mockSupabase = {
-      auth: {
-        signInWithPassword: vi.fn().mockResolvedValue({ error: { message: 'Invalid credentials' } }),
-      },
-    };
-    createClient.mockResolvedValue(mockSupabase);
-
-    // Mock formData for login
-    const formData = new FormData();
-    formData.append('email', 'wrong@example.com');
-    formData.append('password', 'wrongpassword');
-
-    const result = await login(formData);
-
-    // Ensure the error was returned
-    expect(result).toEqual({ error: 'Invalid credentials' });
-    expect(revalidatePath).not.toHaveBeenCalled();
-    expect(redirect).not.toHaveBeenCalled();
+  it('renders login form correctly', () => {
+    render(<LoginForm isSignUp={false} onSuccess={vi.fn()} />);
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByText(/sign in/i)).toBeInTheDocument();
   });
 
-  it('should call revalidatePath and redirect on successful signup', async () => {
-    // Mocking the response of createClient and signUp
-    const mockSupabase = {
-      auth: {
-        signUp: vi.fn().mockResolvedValue({ error: null }),
-      },
-    };
-    createClient.mockResolvedValue(mockSupabase);
-
-    // Mock formData for signup
-    const formData = new FormData();
-    formData.append('email', 'newuser@example.com');
-    formData.append('password', 'newpassword123');
-
-    await signup(formData);
-
-    // Check that revalidatePath and redirect were called
-    expect(revalidatePath).toHaveBeenCalledWith('/', 'layout');
-    expect(redirect).toHaveBeenCalledWith('/');
+  it('renders signup form correctly', () => {
+    render(<LoginForm isSignUp={true} onSuccess={vi.fn()} />);
+    expect(screen.getByText(/create account/i)).toBeInTheDocument();
   });
 
-  it('should redirect to error page when signup fails', async () => {
-    // Mocking the response of createClient 
+  it('calls login function on form submission', async () => {
+    const onSuccessMock = vi.fn();
+    render(<LoginForm isSignUp={false} onSuccess={onSuccessMock} />);
+
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } });
+    fireEvent.click(screen.getByText(/sign in/i));
+
+    await waitFor(() => expect(mockLogin).toHaveBeenCalledWith('test@example.com', 'password123'));
+  });
+
+  it('calls register function on signup', async () => {
+    const onSuccessMock = vi.fn();
+    render(<LoginForm isSignUp={true} onSuccess={onSuccessMock} />);
+
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'newuser@example.com' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'newpassword' } });
+    fireEvent.click(screen.getByText(/create account/i));
+
+    await waitFor(() => expect(mockRegister).toHaveBeenCalledWith('newuser@example.com', 'newpassword'));
+  });
+
+  it('displays error message when login fails', async () => {
+    mockLogin.mockRejectedValue(new Error('Invalid credentials'));
+    render(<LoginForm isSignUp={false} onSuccess={vi.fn()} />);
+
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'wrong@example.com' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'wrongpassword' } });
+    fireEvent.click(screen.getByText(/sign in/i));
+
+    await waitFor(() => expect(screen.getByText(/invalid credentials/i)).toBeInTheDocument());
+  });
+
+  it('shows success message and calls onSuccess after signup', async () => {
+    const onSuccessMock = vi.fn();
+    render(<LoginForm isSignUp={true} onSuccess={onSuccessMock} />);
+
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@example.com' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } });
+    fireEvent.click(screen.getByText(/create account/i));
+
+    await waitFor(() => expect(screen.getByText(/account created!/i)).toBeInTheDocument());
+    await waitFor(() => expect(onSuccessMock).toHaveBeenCalled(), { timeout: 2000 });
+  });
+});
