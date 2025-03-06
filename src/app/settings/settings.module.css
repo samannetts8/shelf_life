@@ -41,7 +41,7 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background-color: #4a7aff;
+  background-color: #10B981;
   color: white;
   display: flex;
   align-items: center;
@@ -132,7 +132,7 @@
 }
 
 input:checked + .slider {
-  background-color: #4a7aff;
+  background-color: #10B981;
 }
 
 input:checked + .slider:before {
@@ -140,7 +140,7 @@ input:checked + .slider:before {
 }
 
 .saveButton {
-  background-color: #4a7aff;
+  background-color: #10B981;
   color: white;
   border: none;
   border-radius: 30px;
@@ -152,7 +152,7 @@ input:checked + .slider:before {
 }
 
 .saveButton:hover {
-  background-color: #3a5fd9;
+  background-color: #b2dcce;
 }
 
 .saveButton:disabled {
@@ -206,3 +206,4 @@ input:checked + .slider:before {
 .version {
   margin: 0;
   font-size: 14px;
+}
