@@ -6,6 +6,7 @@ import ClientLayout from "../ClientLayout";
 import styles from "./settings.module.css";
 import { useAuth } from "../hooks/use-auth";
 import { useRouter } from "next/navigation";
+// import styles from "../components/Mobile-layout.module";
 
 function SettingsContent() {
   const { user, logout } = useAuth();
@@ -53,7 +54,7 @@ function SettingsContent() {
 
   return (
     <MobileLayout>
-      <div className={styles.container}>
+      <div className={styles.addButton}>
         <h1 className={styles.title}>Settings</h1>
 
         <section className={styles.section}>
