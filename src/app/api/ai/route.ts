@@ -171,7 +171,7 @@ export async function POST(request: Request) {
     }
 
     // STEP 3: Otherwise, we need to generate AI recipes
-    const numAiRecipesNeeded = 1;
+    const numAiRecipesNeeded = 3;
     console.log(`Generating ${numAiRecipesNeeded} AI recipes`);
 
     let aiRecipes = [];
