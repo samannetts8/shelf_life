@@ -15,9 +15,9 @@
 - [Problem Statement](#problem-statement)
 - [Solution](#solution)
 - [Tech Stack](#tech-stack)
-- [Setup & Installation](#setup-&-installation)
+- [Setup & Installation](#setup--installation)
 - [Features](#features)
-- [Challenges & Learnings](#challenges-&-learnings)
+- [Challenges & Learnings](#challenges--learnings)
 - [Future Improvements](#future-improvements)
 - [Contributors](#contributors)
 
