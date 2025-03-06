@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest"
   },
   "dependencies": {
     "@huggingface/inference": "^3.5.1",
@@ -33,7 +34,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.2.1",
+    "jsdom": "^26.0.0",
     "supabase-cli": "^0.0.21",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.0.8"
   }
 }

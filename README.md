@@ -124,7 +124,7 @@ Example:
 | Holly | ... | [@Holly](https://github.com/Holl4444) |
 | Danielle | ... | [@Dani](https://github.com/daniellem62) |
 | Nasrin | DevOps/ Backend & Frontend | [@Nas](https://github.com/Nas1010) |
-| Owen | ... | [@Owen](https://github.com/Oweshbin) |
+| Owen | Front-end &  Backend Engineer/ Quality Assurance| [@Owen](https://github.com/Oweshbin) |
 | Sam | ... | [@Sam](https://github.com/samannetts8) |
 
 ---
