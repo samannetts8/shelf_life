@@ -6,7 +6,7 @@
 
 **An app that helps track food expiry dates, cut waste, and prevent overbuying**
 
-**Live Demo:** https://shelf-life-rose.vercel.app
+**Live Demo:** https://shelf-life-dun.vercel.app/
 
 ---
 
@@ -37,26 +37,31 @@ Our app helps reduce waste by keeping users informed on when their food will exp
 
 ## Tech Stack
 
- **Frontend:** 
+**Frontend:**
+
 - Next.js - React framework
 - React - UI library
 - CSS Modules - For styling
 - Animate.css - For animations
 - TypeScript - For type safety
 
- **Backend:** 
+  **Backend:**
+
 - Node.js - JavaScript runtime environment
 - PostgreSQL - Relational database management system
 - OpenAI (gpt-3.5-turbo) - AI language model API
- 
-**Authentication:** 
+
+**Authentication:**
+
 - Supabase - Backend-as-a-service (BaaS)
 
 **Testing:**
+
 - Vitest - Unit testing framework
 - Playwright - End-to-end testing framework
 
 **Deployment:**
+
 - Vercel - Frontend deployment platform
 - Supabase - Backend platform
 
@@ -109,7 +114,7 @@ npm run dev
 Example:
 
 > Key Takeaways:
-> 
+>
 > - Implementing **real-time chat** using Firebase was a challenge due to security concerns, but we learned about Firestore rules.
 > - Managing **user roles (landlords vs. tenants)** in the database helped us understand relational data modelling.
 
@@ -127,14 +132,14 @@ Example:
 
 ## 👥 Contributors
 
-| Name | Role | GitHub |
-| --- | --- | --- |
-| Louis | Database & Frontend / Animations | [@Louis](https://github.com/L-Brookling) |
-| Holly | Backend & AI | [@Holly](https://github.com/Holl4444) |
-| Danielle | Backend & AI | [@Dani](https://github.com/daniellem62) |
-| Nasrin | DevOps & Frontend & Playwright | [@Nas](https://github.com/Nas1010) |
-| Owen | Frontend & Testing | [@Owen](https://github.com/Oweshbin) |
-| Sam | Backend & DevOps | [@Sam](https://github.com/samannetts8) |
+| Name     | Role                             | GitHub                                   |
+| -------- | -------------------------------- | ---------------------------------------- |
+| Louis    | Database & Frontend / Animations | [@Louis](https://github.com/L-Brookling) |
+| Holly    | Backend & AI                     | [@Holly](https://github.com/Holl4444)    |
+| Danielle | Backend & AI                     | [@Dani](https://github.com/daniellem62)  |
+| Nasrin   | DevOps & Frontend & Playwright   | [@Nas](https://github.com/Nas1010)       |
+| Sam      | Backend & DevOps                 | [@Sam](https://github.com/samannetts8)   |
+| Owen     | Frontend & Testing               | [@Owen](https://github.com/Oweshbin)     |
 
 ---
 
@@ -143,4 +148,3 @@ Example:
 - **What impact does your project have in the real world?**
 
 > Our app helps reduce food waste by reminding users of expiry dates, preventing unnecessary purchases, and encouraging mindful consumption. By cutting household waste, it not only saves users money but also supports the fight against food poverty and reduces environmental impact.
-
