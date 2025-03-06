@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { MobileLayout } from "../components/mobile-layout";
-import { useFoodItems } from "../hooks/foodItemContext";
-import styles from "./ai.module.css";
-import ClientLayout from "../ClientLayout";
+import { useState, useEffect } from 'react';
+import { MobileLayout } from '../components/mobile-layout';
+import { useFoodItems } from '../hooks/foodItemContext';
+import styles from './ai.module.css';
+import ClientLayout from '../ClientLayout';
 
 interface Recipe {
   title: string;
@@ -17,9 +17,12 @@ interface Recipe {
 }
 
 // Utility function to truncate titles
-function truncateTitle(title: string, maxLength: number = 30): string {
+function truncateTitle(
+  title: string,
+  maxLength: number = 30
+): string {
   return title.length > maxLength
-    ? title.substring(0, maxLength) + "..."
+    ? title.substring(0, maxLength) + '...'
     : title;
 }
 
@@ -31,9 +34,37 @@ function AIRecipeContent() {
   // This will now work because we're inside FoodItemsProvider
   const { expiringSoon, loading } = useFoodItems();
 
+  // Function to fetch image for a recipe
+  const fetchRecipeImage = async (
+    recipe: Recipe
+  ): Promise<string> => {
+    try {
+      const response = await fetch('/api/ai-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: recipe.title || recipe.name || '',
+          emoji: recipe.emoji,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.imageUrl || '';
+      }
+    } catch (error) {
+      console.error('Error fetching image:', error);
+    }
+    return ''; // Return empty string if image fetch fails
+  };
+
   const generateRecipes = async () => {
     if (expiringSoon.length === 0) {
-      setError("No ingredients expiring soon to generate recipes with.");
+      setError(
+        'No ingredients expiring soon to generate recipes with.'
+      );
       return;
     }
 
@@ -44,39 +75,47 @@ function AIRecipeContent() {
       // Format the ingredients for the AI
       const ingredientsList = expiringSoon
         .map((item) => `${item.name} (${item.quantity} ${item.unit})`)
-        .join(", ");
+        .join(', ');
 
-      const response = await fetch("/api/ai", {
-        method: "POST",
+      const response = await fetch('/api/ai', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ ingredients: ingredientsList }),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to generate recipes: ${response.status}`);
+        throw new Error(
+          `Failed to generate recipes: ${response.status}`
+        );
       }
 
       const data = await response.json();
 
       // Process recipes to ensure they have the expected format
-      const processedRecipes = (data.recipes || []).map((recipe: Recipe) => ({
-        ...recipe,
-        name: recipe.title || recipe.name || "Untitled Recipe",
-        match_count:
-          recipe.match_count ||
-          expiringSoon.filter((item) =>
-            recipe.ingredients.some((ing) =>
-              ing.toLowerCase().includes(item.name.toLowerCase())
-            )
-          ).length,
-      }));
+      const processedRecipes = await Promise.all(
+        (data.recipes || []).map(async (recipe: Recipe) => {
+          const imageUrl = await fetchRecipeImage(recipe);
+          return {
+            ...recipe,
+            name: recipe.title || recipe.name || 'Untitled Recipe',
+            match_count:
+              recipe.match_count ||
+              expiringSoon.filter((item) =>
+                recipe.ingredients.some((ing) =>
+                  ing.toLowerCase().includes(item.name.toLowerCase())
+                )
+              ).length,
+            imageUrl,
+          };
+        })
+      );
 
       setRecipes(processedRecipes);
     } catch (err) {
-      setError("Failed to generate recipes. Please try again.");
-      console.error("Error generating recipes:", err);
+      setError('Failed to generate recipes. Please try again.');
+      console.error('Error generating recipes:', err);
     } finally {
       setAiLoading(false);
     }
@@ -99,7 +138,8 @@ function AIRecipeContent() {
                 <li key={item.id}>
                   {item.name} - {item.quantity} {item.unit}
                   <span className={styles.expiryDate}>
-                    Expires: {new Date(item.expiry_date).toLocaleDateString()}
+                    Expires:{' '}
+                    {new Date(item.expiry_date).toLocaleDateString()}
                   </span>
                 </li>
               ))}
@@ -112,7 +152,7 @@ function AIRecipeContent() {
           onClick={generateRecipes}
           disabled={loading || aiLoading || expiringSoon.length === 0}
         >
-          {aiLoading ? "Generating..." : "Generate Recipes"}
+          {aiLoading ? 'Generating...' : 'Generate Recipes'}
         </button>
 
         {error && <div className={styles.error}>{error}</div>}
@@ -121,53 +161,59 @@ function AIRecipeContent() {
           <div className={styles.recipesContainer}>
             <h2>Recipe Suggestions</h2>
             <div className={styles.recipeCards}>
-            {recipes.map((recipe, index) => {
-              const cardClass = index % 2 === 0 ? styles.even : styles.odd;
-              return (
-                <div
-                  key={index}
-                  className={`${styles.recipeCard} ${cardClass}`}
-                >
-                  <div className={styles.recipeImageContainer}>
-                    {recipe.imageUrl ? (
-                      <img
-                        src={recipe.imageUrl}
-                        alt={recipe.name || recipe.title}
-                        className={styles.recipeImage}
-                      />
-                    ) : (
-                      <div className={styles.placeholderImage}>
-                        <div className={styles.mountainIcon}></div>
-                        <div className={styles.sunIcon}></div>
-                        <span className={styles.emoji}>{recipe.emoji}</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className={styles.recipeInfo}>
-                    <h3 className={styles.recipeTitle}>
-                      {truncateTitle(recipe.name || recipe.title)}
-                    </h3>
-                    <p className={styles.recipeMatches}>
-                      Ingredients used: <span>{recipe.match_count}</span>
-                    </p>
+              {recipes.map((recipe, index) => {
+                const cardClass =
+                  index % 2 === 0 ? styles.even : styles.odd;
+                return (
+                  <div
+                    key={index}
+                    className={`${styles.recipeCard} ${cardClass}`}
+                  >
+                    <div className={styles.recipeImageContainer}>
+                      {recipe.imageUrl ? (
+                        <img
+                          src={recipe.imageUrl}
+                          alt={recipe.name || recipe.title}
+                          className={styles.recipeImage}
+                        />
+                      ) : (
+                        <div className={styles.placeholderImage}>
+                          <div className={styles.mountainIcon}></div>
+                          <div className={styles.sunIcon}></div>
+                          <span className={styles.emoji}>
+                            {recipe.emoji}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className={styles.recipeInfo}>
+                      <h3 className={styles.recipeTitle}>
+                        {truncateTitle(recipe.name || recipe.title)}
+                      </h3>
+                      <p className={styles.recipeMatches}>
+                        Ingredients used:{' '}
+                        <span>{recipe.match_count}</span>
+                      </p>
 
-                    <details className={styles.recipeDetails}>
-                      <summary>View Recipe</summary>
-                      <div className={styles.recipeContent}>
-                        <h4>Ingredients:</h4>
-                        <ul>
-                          {recipe.ingredients.map((ingredient, i) => (
-                            <li key={i}>{ingredient}</li>
-                          ))}
-                        </ul>
-                        <h4>Instructions:</h4>
-                        <p>{recipe.instructions}</p>
-                      </div>
-                    </details>
+                      <details className={styles.recipeDetails}>
+                        <summary>View Recipe</summary>
+                        <div className={styles.recipeContent}>
+                          <h4>Ingredients:</h4>
+                          <ul>
+                            {recipe.ingredients.map(
+                              (ingredient, i) => (
+                                <li key={i}>{ingredient}</li>
+                              )
+                            )}
+                          </ul>
+                          <h4>Instructions:</h4>
+                          <p>{recipe.instructions}</p>
+                        </div>
+                      </details>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
             </div>
           </div>
         )}

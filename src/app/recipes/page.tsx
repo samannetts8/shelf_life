@@ -305,6 +305,8 @@ interface RecipeCardProps {
   cardColor: 'orange' | 'teal';
 }
 
+// Fix the RecipeCard component syntax:
+
 function RecipeCard({ recipe, cardColor }: RecipeCardProps) {
   const cardClass =
     cardColor === 'orange' ? styles.orangeCard : styles.tealCard;
@@ -337,11 +339,7 @@ function RecipeCard({ recipe, cardColor }: RecipeCardProps) {
           {truncateTitle(recipe.name)}
         </h3>
         <p className={styles.recipeMatches}>
-<<<<<<< Updated upstream
-          Ingredients used: <span>{recipe.match_count == null? 0:recipe.match_count}</span>
-=======
           Ingredients used: <span>{recipe.match_count ?? 0}</span>
->>>>>>> Stashed changes
         </p>
       </div>
     </div>

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { HfInference } from '@huggingface/inference';
 import { FoodItemType } from '../../types/food-item';
 import OpenAI from 'openai';
 
@@ -20,11 +19,19 @@ interface Recipe {
   id?: number | string;
 }
 
+// Create an interface for the OpenAI recipe response structure
+interface OpenAIRecipeResponse {
+  title: string;
+  ingredients: string[] | string;
+  instructions: string;
+  emoji?: string;
+  tip?: string;
+}
+
+// Update this function:
 export async function getAiRecipes(ingredients: FoodItemType[]) {
-  console.log(
-    'Getting recipes from HuggingFace AI using ingredients'
-  );
-  let ingredientsArray = ingredients.map((item) => item.name);
+  console.log('Getting recipes from OpenAI using ingredients');
+  const ingredientsArray = ingredients.map((item) => item.name);
   const prompt = `
 You are a helpful AI chef. Please create a detailed and structured recipe using the following ingredients: ${ingredientsArray.join(
     ', '
@@ -44,7 +51,6 @@ Return the recipe as a JSON object with the following structure:
 `.trim();
 
   try {
-    // Fix: Pass token directly as a string
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
@@ -65,7 +71,7 @@ Return the recipe as a JSON object with the following structure:
       response_format: { type: 'json_object' },
       temperature: 0.7,
     });
-    let generatedText = response.choices[0].message.content;
+    const generatedText = response.choices[0].message.content;
     console.log('Generated Text:', generatedText);
     return [
       {
@@ -74,7 +80,7 @@ Return the recipe as a JSON object with the following structure:
       },
     ];
   } catch (err) {
-    console.error('Error fetching from Hugging Face AI', err);
+    console.error('Error fetching from OpenAI:', err);
   }
   return [
     {
@@ -205,46 +211,46 @@ export async function POST(request: Request) {
     let aiRecipes: Recipe[] = [];
 
     try {
-      // Try with the correct authentication method
-      console.log('Initializing HuggingFace client');
+      console.log('Initializing OpenAI client');
 
-      // Create more robust HF initialization
-      const hfToken = process.env.HUGGINGFACE_API_TOKEN;
-
-      if (!hfToken) {
-        console.error('HuggingFace API token is not set');
-        throw new Error('Missing HuggingFace API token');
-      }
-
-      const hf = new HfInference(hfToken);
-      const ingredientsArray = Array.isArray(ingredients)
-        ? ingredients
-        : [ingredients];
-
-      const prompt = `
-You are a helpful AI chef. Please create a detailed and structured recipe using the following ingredients: ${ingredientsArray.join(
-        ', '
-      )}.
-
-Return the recipe as a JSON object with the following structure:
-{
-  "title": "Recipe Name",
-  "ingredients": [
-    "List item 1",
-    "List item 2"
-  ],
-  "instructions": "Step-by-step cooking process",
-  "emoji": "A relevant emoji",
-  "tip": "A useful cooking tip"
-}
-`.trim();
-
-      console.log('Calling HuggingFace API...');
-
-      // Try with a more capable model (Mistral-7B-Instruct-v0.1)
       const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
       });
+
+      // Create a detailed prompt for recipe generation
+      const prompt = `
+Generate ${numAiRecipesNeeded} unique recipes using these ingredients: ${ingredients}
+
+Create recipes that would realistically use as many of these ingredients as possible.
+For each recipe provide:
+1. A creative, appetizing title
+2. A list of ingredients (including those from the provided list plus basic pantry items)
+3. Clear step-by-step cooking instructions
+4. An appropriate emoji representing the dish
+5. A helpful cooking tip
+
+Format your response as a JSON object with an array of recipes like this:
+{
+  "recipes": [
+    {
+      "title": "Recipe Name",
+      "ingredients": ["Ingredient 1", "Ingredient 2"],
+      "instructions": "Step-by-step cooking process",
+      "emoji": "🍲",
+      "tip": "A useful cooking tip"
+    },
+    {
+      "title": "Another Recipe",
+      "ingredients": ["Ingredient 1", "Ingredient 2"],
+      "instructions": "Step-by-step cooking process",
+      "emoji": "🍜",
+      "tip": "A useful cooking tip"
+    }
+  ]
+}
+`.trim();
+
+      console.log('Calling OpenAI API...');
 
       const response = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
@@ -266,11 +272,6 @@ Return the recipe as a JSON object with the following structure:
       console.log('Generated Text:', generatedText);
 
       console.log('Received response from OpenAI');
-      console.log('Raw OpenAI Response:', response);
-      console.log(
-        'Generated Text:',
-        response.choices[0].message.content
-      );
 
       // Try to parse the response
       if (generatedText) {
@@ -331,41 +332,76 @@ Return the recipe as a JSON object with the following structure:
   }
 }
 
-// Replace your parseGeneratedRecipes function with this one
+// Update your parseGeneratedRecipes function:
+
 function parseGeneratedRecipes(
   generatedText: string,
   numRecipes: number
-) {
+): Recipe[] {
   try {
     // Try parsing the response as JSON first
     const jsonResponse = JSON.parse(generatedText);
 
-    // Check if it's a valid recipe object
+    // Check if we have a recipes array (format we're requesting from OpenAI)
+    if (jsonResponse.recipes && Array.isArray(jsonResponse.recipes)) {
+      console.log(
+        `Found ${jsonResponse.recipes.length} recipes in OpenAI response`
+      );
+
+      // Process each recipe in the array with proper typing
+      return jsonResponse.recipes
+        .slice(0, numRecipes)
+        .map((recipeData: OpenAIRecipeResponse, index: number) => {
+          // Create recipe object with our Recipe interface
+          const recipe: Recipe = {
+            title: recipeData.title || 'Untitled Recipe',
+            ingredients: Array.isArray(recipeData.ingredients)
+              ? recipeData.ingredients
+              : recipeData.ingredients?.split('\n') || [],
+            instructions: recipeData.instructions || '',
+            emoji: recipeData.emoji || '🍳',
+            tip: recipeData.tip || '',
+            source: 'ai',
+            imageUrl: '', // Initialize with empty string
+          };
+
+          // Set the imageUrl with index for uniqueness
+          recipe.imageUrl = getRecipeImage(recipe, index);
+
+          return recipe;
+        });
+    }
+
+    // Fallback to check for single recipe format (backup compatibility)
     if (
       jsonResponse.title &&
       jsonResponse.ingredients &&
       jsonResponse.instructions
     ) {
-      return [
-        {
-          title: jsonResponse.title,
-          ingredients: Array.isArray(jsonResponse.ingredients)
-            ? jsonResponse.ingredients
-            : jsonResponse.ingredients.split('\n'),
-          instructions: jsonResponse.instructions,
-          emoji: jsonResponse.emoji || '🍳',
-          tip: jsonResponse.tip || '',
-          source: 'ai',
-          // Add emoji-based placeholder image
-          imageUrl: getEmojiImagePlaceholder(
-            jsonResponse.emoji || '🍳'
-          ),
-        },
-      ];
+      console.log('Found single recipe in OpenAI response');
+
+      // Create recipe object WITH imageUrl property
+      const recipe: Recipe = {
+        title: jsonResponse.title,
+        ingredients: Array.isArray(jsonResponse.ingredients)
+          ? jsonResponse.ingredients
+          : jsonResponse.ingredients.split('\n'),
+        instructions: jsonResponse.instructions,
+        emoji: jsonResponse.emoji || '🍳',
+        tip: jsonResponse.tip || '',
+        source: 'ai',
+        imageUrl: '', // Initialize with empty string
+      };
+
+      // Then set the imageUrl value
+      recipe.imageUrl = getRecipeImage(recipe);
+
+      return [recipe];
     }
 
     // If we get here, the JSON didn't have the expected structure,
     // fall back to the regex parsing
+    console.log('Using regex parsing as fallback');
     return parseWithRegex(generatedText, numRecipes);
   } catch (error) {
     console.error('Error parsing JSON response:', error);
@@ -374,18 +410,25 @@ function parseGeneratedRecipes(
   }
 }
 
-// Move the original parsing logic to this helper function
-function parseWithRegex(generatedText: string, numRecipes: number) {
-  const recipes = [];
+// Update in parseWithRegex function:
+
+function parseWithRegex(
+  generatedText: string,
+  numRecipes: number
+): Recipe[] {
+  const recipes: Recipe[] = [];
   const recipeRegex =
     /Recipe \d+:\s*Title:\s*(.*?)\s*Ingredients:\s*([\s\S]*?)\s*Instructions:\s*([\s\S]*?)\s*Emoji:\s*(.*?)(?=\nRecipe \d+:|$)/g;
   let match;
+
   while (
     (match = recipeRegex.exec(generatedText)) !== null &&
     recipes.length < numRecipes
   ) {
     const [_, title, ingredients, instructions, emoji] = match;
-    recipes.push({
+
+    // Create with imageUrl property
+    const recipe: Recipe = {
       title: title.trim(),
       ingredients: ingredients
         .split('\n')
@@ -394,21 +437,26 @@ function parseWithRegex(generatedText: string, numRecipes: number) {
       instructions: instructions.trim(),
       emoji: emoji.trim(),
       source: 'ai',
-      // Add emoji-based placeholder image
-      imageUrl: getEmojiImagePlaceholder(emoji.trim() || '🍳'),
-    });
+      imageUrl: '', // Initialize with empty string
+    };
+
+    // Then set the imageUrl
+    recipe.imageUrl = getRecipeImage(recipe);
+
+    recipes.push(recipe);
   }
+
   return recipes;
 }
 
-// Update the generateFallbackRecipes function:
+// Update in generateFallbackRecipes function:
 
 function generateFallbackRecipes(
   ingredients: string[],
   count: number
-) {
+): Recipe[] {
   // Generate hardcoded recipes based on the ingredients
-  const recipes = [];
+  const recipes: Recipe[] = [];
 
   // Template recipes that can work with any ingredients
   const templates = [
@@ -483,43 +531,198 @@ function generateFallbackRecipes(
   for (let i = 0; i < Math.min(count, templates.length); i++) {
     const template = templates[i];
 
-    recipes.push({
+    // Create with imageUrl property
+    const recipe: Recipe = {
       title: template.title(ingredients),
-      ingredients: template.ingredients(ingredients).filter(Boolean), // Remove any null/undefined items
+      ingredients: template.ingredients(ingredients).filter(Boolean),
       instructions: template.instructions(ingredients),
       emoji: template.emoji,
       source: 'fallback',
-      // Add emoji-based placeholder image
-      imageUrl: getEmojiImagePlaceholder(template.emoji),
-    });
+      imageUrl: '', // Initialize with empty string
+    };
+
+    // Then set the imageUrl with unique index
+    recipe.imageUrl = getRecipeImage(recipe, i);
+
+    recipes.push(recipe);
   }
 
   return recipes;
 }
 
-// Add this function to your file before calling it:
+// Update the getRecipeImage function:
 
-// Function to generate image URLs based on recipe emojis
-function getEmojiImagePlaceholder(emoji: string): string {
-  // Map of emojis to image URLs
-  const emojiImageMap: Record<string, string> = {
-    '🍲': '/images/recipes/soup.jpg',
-    '🍛': '/images/recipes/curry.jpg',
-    '🍝': '/images/recipes/pasta.jpg',
-    '🥘': '/images/recipes/stir-fry.jpg',
-    '🍜': '/images/recipes/noodles.jpg',
-    '🥗': '/images/recipes/salad.jpg',
-    '🍕': '/images/recipes/pizza.jpg',
-    '🌮': '/images/recipes/tacos.jpg',
-    '🍔': '/images/recipes/burger.jpg',
-    '🍳': '/images/recipes/breakfast.jpg',
-    '🥪': '/images/recipes/sandwich.jpg',
-    '🍖': '/images/recipes/meat.jpg',
-    '🍗': '/images/recipes/chicken.jpg',
-    '🍚': '/images/recipes/rice.jpg',
-    '🍰': '/images/recipes/dessert.jpg',
+function getRecipeImage(
+  recipe: {
+    title: string;
+    emoji?: string;
+  },
+  index?: number
+): string {
+  // Get main dish type
+  const dishTypes = [
+    'pasta',
+    'salad',
+    'soup',
+    'stew',
+    'curry',
+    'sandwich',
+    'burger',
+    'salad',
+    'stir-fry',
+    'roast',
+    'cake',
+    'pie',
+    'bread',
+    'taco',
+    'soup',
+    'noodle',
+    'chicken',
+    'fish',
+    'dessert',
+    'breakfast',
+    'stew',
+    'curry',
+    'sandwich',
+    'burger',
+    'pizza',
+    'stir-fry',
+    'roast',
+    'cake',
+    'pie',
+    'bread',
+    'taco',
+    'rice',
+    'noodle',
+    'chicken',
+    'fish',
+    'dessert',
+    'breakfast',
+  ];
+  const titleLower = recipe.title.toLowerCase();
+  const mainDishType =
+    dishTypes.find((type) => titleLower.includes(type)) || '';
+
+  // Extract key food terms
+  const foodTerms = extractFoodTerms(recipe.title);
+  const emojiTerm = getEmojiSearchTerm(recipe.emoji || '');
+
+  // Build search query with priority to dish type
+  const searchTerms = [];
+
+  // Add main dish type first if found
+  if (mainDishType) {
+    searchTerms.push(mainDishType);
+  }
+
+  // Add other food terms and emoji term
+  [...foodTerms, emojiTerm]
+    .filter((term) => term && term !== mainDishType) // avoid duplicates
+    .slice(0, 2 - (mainDishType ? 1 : 0)) // take up to 2 terms total
+    .forEach((term) => searchTerms.push(term));
+
+  // Select the most appropriate collection
+  let collectionId = '4252079'; // Default food photography
+
+  if (
+    titleLower.includes('dessert') ||
+    titleLower.includes('cake') ||
+    recipe.emoji === '🍰' ||
+    recipe.emoji === '🧁'
+  ) {
+    collectionId = '8961098'; // Desserts
+  } else if (titleLower.includes('salad') || recipe.emoji === '🥗') {
+    collectionId = '3330455'; // Healthy food
+  } else if (
+    titleLower.includes('pasta') ||
+    titleLower.includes('italian')
+  ) {
+    collectionId = '5024590'; // Pasta & Italian
+  } else if (
+    titleLower.includes('breakfast') ||
+    recipe.emoji === '🍳'
+  ) {
+    collectionId = '9370362'; // Breakfast
+  } else if (
+    titleLower.includes('asian') ||
+    titleLower.includes('stir fry') ||
+    titleLower.includes('curry') ||
+    recipe.emoji === '🍜'
+  ) {
+    collectionId = '8073401'; // Asian food
+  }
+
+  // Format search query
+  const finalQuery =
+    searchTerms.length > 0 ? searchTerms.join(',') : 'food,dish';
+
+  console.log(
+    `Image for "${recipe.title}": using collection ${collectionId} with query "${finalQuery}"`
+  );
+
+  // Return the optimized Unsplash collection URL
+  return `https://source.unsplash.com/collection/${collectionId}/400x300/?${encodeURIComponent(
+    finalQuery
+  )}&sig=${index !== undefined ? index : Math.random()}`;
+}
+
+// Helper function to extract food terms from recipe title
+function extractFoodTerms(title: string): string[] {
+  // Lowercase the title for better matching
+  const lowerTitle = title.toLowerCase();
+
+  // List of common food terms to ignore (not visually distinctive)
+  const commonTerms = [
+    'quick',
+    'easy',
+    'simple',
+    'homemade',
+    'classic',
+    'fresh',
+    'healthy',
+    'delicious',
+    'recipe',
+    'style',
+    'flavored',
+    'seasoned',
+    'spicy',
+    'dish',
+  ];
+
+  // Extract words from title, filtering out common terms and short words
+  return lowerTitle
+    .split(/\s+/)
+    .map((word) => word.replace(/[^a-z]/g, '')) // Remove non-alphabetic characters
+    .filter((word) => word.length > 3 && !commonTerms.includes(word));
+}
+
+// Helper function to convert emoji to search term
+function getEmojiSearchTerm(emoji: string): string {
+  const emojiToSearchTerm: Record<string, string> = {
+    '🍲': 'soup',
+    '🍛': 'curry',
+    '🍝': 'pasta',
+    '🥘': 'stir-fry',
+    '🥗': 'salad',
+    '🍕': 'pizza',
+    '🍳': 'breakfast',
+    '🍔': 'burger',
+    '🌮': 'taco',
+    '🍜': 'noodles',
+    '🍚': 'rice',
+    '🍗': 'chicken',
+    '🍖': 'meat',
+    '🍞': 'bread',
+    '🥪': 'sandwich',
+    '🍰': 'cake',
+    '🍎': 'apple',
+    '🥕': 'carrot',
+    '🍆': 'eggplant',
+    '🥑': 'avocado',
+    '🌽': 'corn',
+    '🍤': 'shrimp',
+    '🐟': 'fish',
+    '🥩': 'steak',
   };
-
-  // Default image if no match
-  return emojiImageMap[emoji] || '/images/recipes/default.jpg';
+  return emojiToSearchTerm[emoji] || '';
 }
