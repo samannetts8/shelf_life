@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <div
-        className={`animate__animated animate__slideInDown animate__delay-5s ${styles.images}`}
+        className={`animate__animated animate__slideInDown animate__delay-3s ${styles.images}`}
       >
         <Image
           src="/steak.png"
@@ -71,21 +71,21 @@ export default function Home() {
       </div>
       <div className={styles.content}>
         <Logo
-          className={`animate__animated animate__backInDown animate__delay-1s ${styles.logo}`}
+          className={`animate__animated animate__backInDown animate__delay-2s ${styles.logo}`}
         />
         <h1
-          className={`animate__animated animate__backInLeft animate__delay-2s ${styles.title}`}
+          className={`animate__animated animate__backInLeft animate__delay-1s ${styles.title}`}
         >
           ShelfLife
         </h1>
         <p
-          className={`animate__animated animate__backInRight animate__delay-2s ${styles.subtitle}`}
+          className={`animate__animated animate__backInRight animate__delay-1s ${styles.subtitle}`}
         >
           Waste less, taste more!
         </p>
 
         <p
-          className={`animate__animated animate__backInUp animate__delay-3s ${styles.footer}`}
+          className={`animate__animated animate__backInUp animate__delay-2s ${styles.footer}`}
         >
           Track your food expiration dates and get recipe suggestions to reduce
           waste
