@@ -41,7 +41,7 @@ Our app helps reduce waste by keeping users informed on when their food will exp
 
  **Backend:** Node.js, Express, PostgreSQL
 
-**Authentication:** Clerk
+**Authentication:** Supabase
 
 **Testing:** Vitest (unit testing), Playwright (end-to-end testing)
 
