@@ -26,7 +26,7 @@ export async function login(
     return { error: error.message };
   }
 
-  revalidatePath('/', 'layout');
+  
   revalidatePath('/dashboard', 'layout');
   redirect('/dashboard'); // Redirect to dashboard instead of homepage
 
