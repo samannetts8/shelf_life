@@ -37,7 +37,7 @@ function SettingsContent() {
 
   const handleLogout = async () => {
     await logout();
-    router.push("/login");
+    router.push("/");
   };
 
   const handleDeleteAccount = async () => {
