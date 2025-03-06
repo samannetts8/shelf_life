@@ -91,9 +91,9 @@ export default function Home() {
           waste
         </p>
       </div>
-
-      <LoginPage />
-
+      <div className="animate__animated animate__bounceIn animate__delay-3s">
+        <LoginPage />
+      </div>
       <div className={styles.page}></div>
     </div>
   );
