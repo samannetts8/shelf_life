@@ -12,7 +12,7 @@ interface FoodItemProps {
 export function FoodItem({ item, onConsume, status }: FoodItemProps) {
   const daysUntilExpiry = () => {
     const today = new Date();
-    const expiryDate = new Date(item.expiryDate);
+    const expiryDate = new Date(item.expiry_date);
     const diffTime = expiryDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 

@@ -1,9 +1,9 @@
-"use client";
-import { useState, useEffect } from "react";
-import supabase from "./lib/supabase";
+'use client';
+import { useState, useEffect } from 'react';
+import { createClient } from './utils/supabase/client';
 
 export default function SupabaseTestPage() {
-  const [status, setStatus] = useState("Loading...");
+  const [status, setStatus] = useState('Loading...');
   const [error, setError] = useState<string | null>(null);
   const [details, setDetails] = useState<string | null>(null);
 
@@ -12,50 +12,43 @@ export default function SupabaseTestPage() {
       try {
         // Log the URL we're trying to connect to (without the key)
         console.log(
-          "Attempting to connect to:",
+          'Attempting to connect to:',
           process.env.NEXT_PUBLIC_SUPABASE_URL
         );
 
-        // Test if the client was initialized properly
-        if (!supabase) {
-          throw new Error("Supabase client is undefined");
-        }
+        // Create client using the new approach
+        const supabase = createClient();
 
         // Simple query to test connection and get first row
         const firstRowQuery = await supabase
-          .from("TestTable")
-          .select("id, name, expiry_date, quantity")
+          .from('TestTable')
+          .select('id, name, expiry_date, quantity')
           .limit(1);
 
         if (firstRowQuery.error) throw firstRowQuery.error;
 
         // Use the count query as you already have
         const countQuery = await supabase
-          .from("TestTable")
-          .select("count", { count: "exact" });
+          .from('TestTable')
+          .select('count', { count: 'exact' });
 
         if (countQuery.error) throw countQuery.error;
 
-        setStatus(
-          `Connected! Count: ${JSON.stringify(countQuery.data)}, First Row: ${
-            firstRowQuery.data && firstRowQuery.data.length > 0
-              ? JSON.stringify(firstRowQuery.data[0])
-              : "No data found"
-          }`
-        );
+        // Format success message
+        const successMessage = `
+          Successfully connected to Supabase!
+          Found ${countQuery.count} items.
+          First row: ${JSON.stringify(
+            firstRowQuery.data?.[0] || 'No data'
+          )}
+        `;
+
+        setStatus('Connected!');
+        setDetails(successMessage);
       } catch (err) {
-        console.error("Connection test failed:", err);
-
-        // More detailed error reporting
-        if (err instanceof Error) {
-          setError(err.message);
-          setDetails(err.stack || "No stack trace available");
-        } else {
-          setError("Unknown error type");
-          setDetails(JSON.stringify(err));
-        }
-
-        setStatus("Failed to connect");
+        console.error('Failed to connect to Supabase:', err);
+        setStatus('Failed');
+        setError(err instanceof Error ? err.message : String(err));
       }
     }
 
@@ -63,21 +56,39 @@ export default function SupabaseTestPage() {
   }, []);
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">Supabase Connection Test</h1>
-      <div className="p-4 border rounded-md bg-gray-50">
-        <p className="font-semibold">Status: {status}</p>
-        {error && (
-          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-700 font-medium">Error: {error}</p>
-            {details && (
-              <pre className="mt-2 whitespace-pre-wrap text-xs text-red-600 overflow-auto max-h-40">
-                {details}
-              </pre>
-            )}
-          </div>
-        )}
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">
+        Supabase Connection Test
+      </h1>
+
+      <div className="mb-4">
+        <h2 className="text-xl">
+          Status:{' '}
+          <span
+            className={
+              status === 'Connected!'
+                ? 'text-green-500'
+                : 'text-red-500'
+            }
+          >
+            {status}
+          </span>
+        </h2>
       </div>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <p className="font-bold">Error:</p>
+          <p>{error}</p>
+        </div>
+      )}
+
+      {details && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+          <p className="font-bold">Details:</p>
+          <pre className="whitespace-pre-wrap">{details}</pre>
+        </div>
+      )}
     </div>
   );
 }

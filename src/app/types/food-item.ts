@@ -4,6 +4,6 @@ export interface FoodItemType {
     category: string
     quantity: string
     unit: string
-    expiryDate: string
-    addedDate: string
+    expiry_date: string
+    added_date: string
   }

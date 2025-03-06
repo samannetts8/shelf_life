@@ -1,43 +1,87 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { FoodItem as FoodItemComponent } from "../components/food-item";
-import { FoodItem } from "../components/food-item";
-import { EmptyState } from "../components/empty-state";
-import { FoodItem as initialFoodItems } from "../data/food-items";
-import type { FoodItemType } from "../types/food-item";
-import styles from "./fridge.module.css";
+import { useEffect, useState } from 'react';
+import { FoodItem as FoodItemComponent } from '../components/food-item';
+import { FoodItem } from '../components/food-item';
+import { EmptyState } from '../components/empty-state';
+import { foodItems as initialFoodItems } from '../data/food-items'; // Use a different name
+import type { FoodItemType } from '../types/food-item';
+import styles from './fridge.module.css';
 
-export function Fridge() {
+// Add userId to the props
+interface FridgeProps {
+  userId: string;
+}
+
+export function Fridge({ userId }: FridgeProps) {
   const [foodItems, setFoodItems] = useState<FoodItemType[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real app, this would fetch from an API or database
-    const storedItems = localStorage.getItem("foodItems");
-    if (storedItems) {
-      setFoodItems(JSON.parse(storedItems));
-    } else {
-      setFoodItems(initialFoodItems);
-      localStorage.setItem("foodItems", JSON.stringify(initialFoodItems));
-    }
-    setLoading(false);
-  }, []);
+    const fetchData = async () => {
+      try {
+        // You can use userId here if needed for custom endpoints
+        console.log('Fetching data for user:', userId);
+        const response = await fetch('/api/supabaseRoute');
 
-  const markAsConsumed = (id: string) => {
-    const updatedItems = foodItems.filter((item) => item.id !== id);
-    setFoodItems(updatedItems);
-    localStorage.setItem("foodItems", JSON.stringify(updatedItems));
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(
+            `API error (${response.status}): ${errorText}`
+          );
+          throw new Error(
+            `Failed to fetch data: ${response.status} ${errorText}`
+          );
+        }
+
+        const data = await response.json();
+        console.log(`Received ${data.length} items from API`);
+        setFoodItems(data);
+      } catch (error) {
+        console.error('Error fetching food items:', error);
+        setFoodItems(initialFoodItems);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [userId]); // Add userId as dependency since we're using it
+
+  const markAsConsumed = async (id: string) => {
+    try {
+      // Update the database first
+      const response = await fetch(`/api/supabaseRoute/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update database');
+      }
+
+      // Then update local state
+      const updatedItems = foodItems.filter((item) => item.id !== id);
+      setFoodItems(updatedItems);
+
+      // Optionally update localStorage for offline capability
+      localStorage.setItem('foodItems', JSON.stringify(updatedItems));
+    } catch (error) {
+      console.error('Error marking item as consumed:', error);
+      // Handle error (show notification, etc.)
+    }
   };
 
   // Sort items by expiration date (soonest first)
   const sortedItems = [...foodItems].sort((a, b) => {
-    return new Date(a.expiryDate).getTime() - new Date(b.expiryDate).getTime();
+    return (
+      new Date(a.expiry_date).getTime() -
+      new Date(b.expiry_date).getTime()
+    );
   });
 
   // Group items by expiration status
   const expiringSoon = sortedItems.filter((item) => {
-    const expiryDate = new Date(item.expiryDate);
+    const expiryDate = new Date(item.expiry_date);
     const today = new Date();
     const diffTime = expiryDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -45,7 +89,7 @@ export function Fridge() {
   });
 
   const goodItems = sortedItems.filter((item) => {
-    const expiryDate = new Date(item.expiryDate);
+    const expiryDate = new Date(item.expiry_date);
     const today = new Date();
     const diffTime = expiryDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -53,7 +97,7 @@ export function Fridge() {
   });
 
   const expiredItems = sortedItems.filter((item) => {
-    const expiryDate = new Date(item.expiryDate);
+    const expiryDate = new Date(item.expiry_date);
     const today = new Date();
     return expiryDate < today;
   });
@@ -102,7 +146,9 @@ export function Fridge() {
 
       {goodItems.length > 0 && (
         <section>
-          <h2 className={`${styles.sectionHeading} ${styles.freshHeading}`}>
+          <h2
+            className={`${styles.sectionHeading} ${styles.freshHeading}`}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className={styles.icon}
@@ -111,7 +157,7 @@ export function Fridge() {
             >
               <path
                 fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                 clipRule="evenodd"
               />
             </svg>
@@ -132,7 +178,9 @@ export function Fridge() {
 
       {expiredItems.length > 0 && (
         <section>
-          <h2 className={`${styles.sectionHeading} ${styles.expiredHeading}`}>
+          <h2
+            className={`${styles.sectionHeading} ${styles.expiredHeading}`}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className={styles.icon}
@@ -141,7 +189,7 @@ export function Fridge() {
             >
               <path
                 fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z"
                 clipRule="evenodd"
               />
             </svg>
