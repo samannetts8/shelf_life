@@ -282,46 +282,93 @@ a.secondary {
 }
 
 .scrollElementPrimary,
-.scrollElementSecondary {
+.scrollElementSecondary,
+.scrollElementTertiary {
   position: absolute;
   height: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 2rem;
+  gap: 4rem;
 }
 
 .scrollElementPrimary img,
-.scrollElementSecondary img {
-  width: auto; /* Maintain aspect ratio */
-  height: 150px; /* Adjust size as needed */
-  flex-shrink: 0; /* Prevent images from shrinking */
+.scrollElementSecondary img,
+.scrollElementTertiary img {
+  width: auto;
+  height: 125px;
+  flex-shrink: 0;
 }
 
 .scrollElementPrimary {
-  animation: scrollPrimary 20s linear infinite;
+  animation: scrollPrimary 18s linear infinite;
   left: 100%;
 }
 
 .scrollElementSecondary {
-  animation: scrollSecondary 20s linear infinite;
-  left: 100%;
+  animation: scrollSecondary 10s linear infinite;
+  left: 200%; /* Start further right */
+}
+
+.scrollElementTertiary {
+  animation: scrollTertiary 10s linear infinite;
+  left: 300%;
 }
 
 @keyframes scrollPrimary {
   0% {
-    left: 100%;
+    left: -50%;
   }
   100% {
-    left: -100%;
+    left: -130%; /* Move further left before resetting */
   }
 }
 
 @keyframes scrollSecondary {
   0% {
-    left: 200%;
+    left: 30%; /* Start after primary element */
   }
   100% {
-    left: 0%;
+    left: -50%; /* Stop before fully exiting */
+  }
+}
+
+@keyframes scrollTertiary {
+  0% {
+    left: 110%;
+  }
+  100% {
+    left: 30%;
+  }
+}
+
+/* Add responsive adjustments */
+@media (max-width: 768px) {
+  .scrollParent {
+    height: 8rem;
+  }
+
+  .scrollElementPrimary img,
+  .scrollElementSecondary img,
+  .scrollElementTertiary img {
+    height: 120px;
+  }
+
+  .scrollElementPrimary,
+  .scrollElementSecondary,
+  .scrollElementTertiary {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .scrollParent {
+    height: 6rem;
+  }
+
+  .scrollElementPrimary img,
+  .scrollElementSecondary img,
+  .scrollElementTertiary img {
+    height: 120px;
   }
 }
