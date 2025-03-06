@@ -286,62 +286,78 @@ a.secondary {
 
 .scrollElementPrimary,
 .scrollElementSecondary,
-.scrollElementTertiary {
+.scrollElementTertiary,
+.scrollElementQuaternary {
   position: absolute;
   height: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 4rem;
+  gap: 2rem;
 }
 
 .scrollElementPrimary img,
 .scrollElementSecondary img,
-.scrollElementTertiary img {
+.scrollElementTertiary img,
+.scrollElementQuaternary img {
   width: auto;
-  height: 125px;
+  height: 130px;
   flex-shrink: 0;
 }
 
 .scrollElementPrimary {
-  animation: scrollPrimary 18s linear infinite;
-  left: 100%;
+  animation: scrollPrimary 20s linear infinite;
+  left: 100vw;
 }
 
 .scrollElementSecondary {
-  animation: scrollSecondary 10s linear infinite;
-  left: 200%;
+  animation: scrollSecondary 20s linear infinite;
+  left: 175vw;
 }
 
 .scrollElementTertiary {
-  animation: scrollTertiary 10s linear infinite;
-  left: 300%;
+  animation: scrollTertiary 20s linear infinite;
+  left: 250vw;
+}
+
+.scrollElementQuaternary {
+  animation: scrollQuaternary 20s linear infinite;
+  left: 325vw;
 }
 
 @keyframes scrollPrimary {
   0% {
-    left: -40%;
+    left: 100vw;
   }
   100% {
-    left: -140%; /* Move further left before resetting */
+    left: -175vw;
   }
 }
 
 @keyframes scrollSecondary {
   0% {
-    left: 40%; /* Start after primary element */
+    left: 175vw;
   }
   100% {
-    left: -60%; /* Stop before fully exiting */
+    left: -100vw;
   }
 }
 
 @keyframes scrollTertiary {
   0% {
-    left: 120%;
+    left: 250vw;
   }
   100% {
-    left: 20%;
+    left: -25vw;
+  }
+}
+
+@keyframes scrollQuaternary {
+  0% {
+    left: 325vw;
+  }
+  100% {
+    left: 50vw;
   }
 }
 
@@ -353,14 +369,16 @@ a.secondary {
 
   .scrollElementPrimary img,
   .scrollElementSecondary img,
-  .scrollElementTertiary img {
-    height: 120px;
+  .scrollElementTertiary img,
+  .scrollElementQuaternary img {
+    height: 100px; /* Smaller images on mobile */
   }
 
   .scrollElementPrimary,
   .scrollElementSecondary,
-  .scrollElementTertiary {
-    gap: 0.5rem;
+  .scrollElementTertiary,
+  .scrollElementQuaternary {
+    gap: 1rem; /* Smaller gap on mobile */
   }
 }
 
@@ -370,8 +388,7 @@ a.secondary {
   }
 
   .scrollElementPrimary img,
-  .scrollElementSecondary img,
-  .scrollElementTertiary img {
-    height: 120px;
+  .scrollElementSecondary img {
+    height: 100px;
   }
 }

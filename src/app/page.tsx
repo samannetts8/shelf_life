@@ -15,20 +15,6 @@ export default function Home() {
         <div className={styles.scrollParent}>
           <div className={styles.scrollElementPrimary}>
             <Image
-              src="/steak.png"
-              alt="Steak"
-              width={225}
-              height={150}
-              priority
-              className={`animate__animated ${styles.images}`}
-              onMouseEnter={(e) => {
-                e.currentTarget.classList.add("animate__jello");
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.classList.remove("animate__jello");
-              }}
-            />
-            <Image
               src="/broccoli.png"
               alt="Broccoli"
               width={150}
@@ -72,20 +58,6 @@ export default function Home() {
             />
           </div>
           <div className={styles.scrollElementSecondary}>
-            <Image
-              src="/steak.png"
-              alt="Steak"
-              width={225}
-              height={150}
-              priority
-              className={`animate__animated ${styles.images}`}
-              onMouseEnter={(e) => {
-                e.currentTarget.classList.add("animate__jello");
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.classList.remove("animate__jello");
-              }}
-            />
             <Image
               src="/broccoli.png"
               alt="Broccoli"
@@ -131,9 +103,9 @@ export default function Home() {
           </div>
           <div className={styles.scrollElementTertiary}>
             <Image
-              src="/steak.png"
-              alt="Steak"
-              width={225}
+              src="/broccoli.png"
+              alt="Broccoli"
+              width={150}
               height={150}
               priority
               className={`animate__animated ${styles.images}`}
@@ -144,6 +116,36 @@ export default function Home() {
                 e.currentTarget.classList.remove("animate__jello");
               }}
             />
+            <Image
+              src="/egg.png"
+              alt="Egg"
+              width={150}
+              height={150}
+              priority
+              className={`animate__animated ${styles.images}`}
+              onMouseEnter={(e) => {
+                e.currentTarget.classList.add("animate__jello");
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.classList.remove("animate__jello");
+              }}
+            />
+            <Image
+              src="/watermelon.png"
+              alt="Watermelon"
+              width={150}
+              height={150}
+              priority
+              className={`animate__animated ${styles.images}`}
+              onMouseEnter={(e) => {
+                e.currentTarget.classList.add("animate__jello");
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.classList.remove("animate__jello");
+              }}
+            />
+          </div>
+          <div className={styles.scrollElementQuaternary}>
             <Image
               src="/broccoli.png"
               alt="Broccoli"
