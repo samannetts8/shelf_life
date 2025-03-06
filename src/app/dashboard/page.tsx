@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "../utils/supabase/server";
 import { Fridge } from "../components/fridge";
 import { MobileLayout } from "../components/mobile-layout";
+import { DashboardContent } from "../components/dashboard-content";
 
 export default async function Dashboard() {
   // Server-side auth check
@@ -15,7 +16,7 @@ export default async function Dashboard() {
 
   return (
     <MobileLayout>
-      <Fridge />
+      <DashboardContent />
     </MobileLayout>
   );
 }
