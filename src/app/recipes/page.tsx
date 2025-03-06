@@ -8,15 +8,41 @@ import { MobileLayout } from '../components/mobile-layout';
 // Define the Recipe type
 interface Recipe {
   id: number;
-  title: string;
-  expiry_matches: number;
-  image_url: string;
+  name: string;
+  cuisine: string;
+  dietaryInfoType: string;
+  dietaryInfoRestrictions: string;
+  dietaryInfoSuitableFor: string;
+  dietaryInfoAllergens: string;
+  dietaryInfoVeganSubstitutions: string | null;
+  dietaryInfoGlutenFreeOption: string | null;
+  dietaryInfoProteinSource: string | null;
+  dietaryInfoNutrientDense: string | null;
+  dietaryInfoTraditionalDish: string | null;
+  ingredients: string[];
+  steps: string[];
+  cookingUtensils: string[];
+  nutritionalInfoServings: number;
+  nutritionalInfoCaloriesPerServing: number;
+  nutritionalInfoProteinPerServing: number;
+  nutritionalInfoCarbsPerServing: number;
+  nutritionalInfoFatPerServing: number;
+  nutritionalInfoFiber: number;
+  nutritionalInfoCholesterol: number | null;
+  imageUrl: string;
+  prepTime: string;
+  cookTime: string;
+  ingredientsLowercase: string[];
 }
 
 // Initialize Supabase client (replace with your actual Supabase URL and key)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+
 const supabase = createClient(supabaseUrl, supabaseKey);
+
+const dummy_ingredients = [{"name":"Quinoa","expiry_date":"2025-03-06 13:35:12.768+00"},{"name":"herbs","expiry_date":"2025-03-06 10:59:11.828+00"},{"name":"corn tortillas","expiry_date":"2025-03-06 13:35:12.768+00"},{"name":"cilantro","expiry_date":"2025-03-06 10:59:11.828+00"},{"name":"avocado","expiry_date":"2025-03-06 13:35:12.768+00"},{"name":"bbq sauce","expiry_date":"2025-03-06 10:59:11.828+00"}]
 
 export default function RecipesPage() {
   const [topMatches, setTopMatches] = useState<Recipe[]>([]);
@@ -24,27 +50,72 @@ export default function RecipesPage() {
   const [loading, setLoading] = useState(true);
   const carouselRef = useRef<HTMLDivElement>(null);
 
+  function cleanIngredientsData(ingredients: Array<{name: string, expiry_date: string}>) {
+    return ingredients.map(ingredient => ({
+      name: ingredient.name.toLowerCase(),
+      expiry_date: ingredient.expiry_date.split(' ')[0] // or .slice(0, 10)
+    }));
+  }
+
+  const clean_dummy = cleanIngredientsData(dummy_ingredients)
+
   useEffect(() => {
     async function fetchRecipes() {
       try {
-        // Fetch top matches (assumed to be sorted by expiry_matches in descending order)
-        const { data: topData, error: topError } = await supabase
-          .from('recipes')
-          .select('*')
-          .order('expiry_matches', { ascending: false })
-          .limit(3);
-
-        if (topError) throw topError;
         
+        const { data: allRecipes, error } = await supabase
+        .from('recipes')
+        .select('*');
+
+      
+      if (error) throw error;
+      console.log("test1")
+      console.log(allRecipes)
+
+      
+      // Process recipes to count matches
+      const processedRecipes = allRecipes.map(recipe => {
+        let matchCount = 0;
+        
+        try {
+          const ingredientsArray = recipe.ingredients_lowercase.split(',')
+            .map(ing => ing.trim()); // trim whitespace
+          console.log('Recipe ingredients:', ingredientsArray);
+          
+          // Extract just the names from clean_dummy
+          const cleanedIngredientNames = clean_dummy.map(item => item.name);
+          console.log('Cleaned ingredients to match:', cleanedIngredientNames);
+      
+          // Count matches
+          matchCount = cleanedIngredientNames.filter(cleanName => 
+            ingredientsArray.some(recipeIng => recipeIng.includes(cleanName))
+          ).length;
+          
+          console.log(`Recipe ${recipe.name} match count:`, matchCount);
+        } catch (e) {
+          console.error(`Error processing recipe ${recipe.id}:`, e);
+        }
+        
+        return { ...recipe, match_count: matchCount };
+      });
+      
+      console.log("test3")
+      // Sort by match count and take top 4
+      const topData = processedRecipes
+        .filter(recipe => recipe.match_count > 0)
+        .sort((a, b) => b.match_count - a.match_count)
+        .slice(0, 4);
+        if (error) throw error;
         // Fetch other suggestions (next 10 recipes)
         const { data: otherData, error: otherError } = await supabase
           .from('recipes')
           .select('*')
-          .order('expiry_matches', { ascending: false })
-          .range(3, 12); // Skip the first 3 (top matches) and get the next 10
-
+          // .order('expiry_matches', { ascending: false })
+          .range(4, 12); // Skip the first 3 (top matches) and get the next 10
+          console.log(otherData)
         if (otherError) throw otherError;
-
+        console.log(`topData:`, JSON.stringify(topData,null,2))
+        console.log(`otherData:`, JSON.stringify(otherData,null,2))
         setTopMatches(topData || []);
         setOtherMatches(otherData || []);
       } catch (error) {
@@ -163,13 +234,20 @@ function RecipeCard({ recipe, cardColor }: RecipeCardProps) {
     ? styles.orangeCard 
     : styles.tealCard;
 
+  // Truncate title if longer than 25 characters
+  const truncateTitle = (title: string, maxLength: number = 25) => {
+    return title.length > maxLength 
+      ? `${title.substring(0, maxLength)}...` 
+      : title;
+  };
+
   return (
     <div className={`${styles.recipeCard} ${cardClass}`}>
       <div className={styles.recipeImageContainer}>
-        {recipe.image_url ? (
+        {recipe.imageUrl ? (
           <img 
-            src={recipe.image_url} 
-            alt={recipe.title} 
+            src={recipe.imageUrl} 
+            alt={recipe.name} 
             className={styles.recipeImage}
           />
         ) : (
@@ -180,9 +258,11 @@ function RecipeCard({ recipe, cardColor }: RecipeCardProps) {
         )}
       </div>
       <div className={styles.recipeInfo}>
-        <h3 className={styles.recipeTitle}>{recipe.title}</h3>
+        <h3 className={styles.recipeTitle}>
+          {truncateTitle(recipe.name)}
+        </h3>
         <p className={styles.recipeMatches}>
-          {recipe.expiry_matches} expiry matches...
+          Ingredients used: <span>{recipe.match_count}</span>
         </p>
       </div>
     </div>
