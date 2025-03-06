@@ -1,0 +1,979 @@
+{
+    "recipes": [
+        {
+            "id": 1,
+            "name": "Roasted Vegetable Buddha Bowl",
+            "cuisine": "Modern Fusion",
+            "dietaryInfo": {
+                "type": ["Vegan", "Gluten-Free"],
+                "restrictions": ["No Dairy", "No Eggs"],
+                "suitableFor": ["Plant-Based Diets", "Whole Food Diets"],
+                "allergens": ["Nuts (optional)"]
+            },
+            "ingredients": [
+                "Quinoa",
+                "Sweet potato",
+                "Chickpeas",
+                "Kale",
+                "Red bell pepper",
+                "Tahini",
+                "Lemon juice",
+                "Olive oil",
+                "Maple syrup",
+                "Garlic",
+                "Cumin",
+                "Paprika"
+            ],
+            "steps": [
+                "Roast chopped vegetables with spices",
+                "Cook quinoa",
+                "Prepare tahini dressing",
+                "Crisp chickpeas in oven",
+                "Assemble bowl with layers",
+                "Drizzle with tahini dressing"
+            ],
+            "cookingUtensils": [
+                "Baking sheet",
+                "Cutting board",
+                "Rice cooker",
+                "Mixing bowl"
+            ],
+            "nutritionalInfo": {
+                "servings": 2,
+                "caloriesPerServing": 420,
+                "proteinPerServing": 18,
+                "carbsPerServing": 55,
+                "fatPerServing": 15,
+                "fiber": 12
+            },
+            "imageUrl": "https://iamstufft.com/wp-content/uploads/2021/03/buddha-bowl_.jpg",
+            "prepTime": "15 minutes",
+            "cookTime": "30 minutes"
+        },
+        {
+            "id": 2,
+            "name": "Mushroom Wellington",
+            "cuisine": "Modern European",
+            "dietaryInfo": {
+                "type": ["Vegetarian", "Can be Vegan"],
+                "restrictions": ["No Meat"],
+                "suitableFor": ["Vegetarian Diets"],
+                "allergens": ["Gluten", "Dairy"],
+                "veganSubstitutions": ["Use vegan puff pastry", "Replace cheese with nutritional yeast"]
+            },
+            "ingredients": [
+                "Portobello mushrooms",
+                "Puff pastry",
+                "Spinach",
+                "Goat cheese",
+                "Thyme",
+                "Rosemary",
+                "Garlic",
+                "Dijon mustard",
+                "Egg wash",
+                "Olive oil"
+            ],
+            "steps": [
+                "Sauté mushrooms with herbs",
+                "Layer spinach and cheese",
+                "Wrap in puff pastry",
+                "Brush with egg wash",
+                "Bake until golden",
+                "Rest before serving"
+            ],
+            "cookingUtensils": [
+                "Baking sheet",
+                "Skillet",
+                "Pastry brush",
+                "Knife"
+            ],
+            "nutritionalInfo": {
+                "servings": 4,
+                "caloriesPerServing": 380,
+                "proteinPerServing": 15,
+                "carbsPerServing": 28,
+                "fatPerServing": 22,
+                "fiber": 4
+            },
+            "imageUrl": "https://veggiedesserts.com/wp-content/uploads/2019/12/mushroom-wellington-2-683x1024.jpg",
+            "prepTime": "30 minutes",
+            "cookTime": "40 minutes"
+        },
+        {
+            "id": 3,
+            "name": "Jackfruit Pulled 'Pork' Tacos",
+            "cuisine": "Vegan Mexican Fusion",
+            "dietaryInfo": {
+                "type": ["Vegan", "Gluten-Free"],
+                "restrictions": ["No Animal Products"],
+                "suitableFor": ["Plant-Based Diets", "Ethical Eating"],
+                "allergens": ["None"]
+            },
+            "ingredients": [
+                "Young jackfruit",
+                "Corn tortillas",
+                "BBQ sauce",
+                "Red onion",
+                "Cilantro",
+                "Lime",
+                "Avocado",
+                "Smoked paprika",
+                "Cumin",
+                "Garlic powder"
+            ],
+            "steps": [
+                "Drain and press jackfruit",
+                "Season with spices",
+                "Slow cook with BBQ sauce",
+                "Shred jackfruit",
+                "Warm tortillas",
+                "Assemble tacos with toppings"
+            ],
+            "cookingUtensils": [
+                "Slow cooker or skillet",
+                "Cutting board",
+                "Tongs"
+            ],
+            "nutritionalInfo": {
+                "servings": 3,
+                "caloriesPerServing": 290,
+                "proteinPerServing": 10,
+                "carbsPerServing": 45,
+                "fatPerServing": 8,
+                "fiber": 9
+            },
+            "imageUrl": "https://www.rainbownourishments.com/wp-content/uploads/2021/07/vegan-pulled-pork-bbq-jackfruit-tacos-1.jpg",
+            "prepTime": "15 minutes",
+            "cookTime": "30 minutes"
+        },
+        {
+            "id": 4,
+            "name": "Lentil and Walnut Bolognese",
+            "cuisine": "Vegan Italian Adaptation",
+            "dietaryInfo": {
+                "type": ["Vegan", "Gluten-Free Option"],
+                "restrictions": ["No Animal Products"],
+                "suitableFor": ["Plant-Based Diets", "Whole Food Diets"],
+                "allergens": ["Nuts", "Potential Gluten"],
+                "glutenFreeOption": "Use gluten-free pasta"
+            },
+            "ingredients": [
+                "Green lentils",
+                "Walnuts",
+                "Whole wheat pasta",
+                "Tomatoes",
+                "Onion",
+                "Garlic",
+                "Carrots",
+                "Celery",
+                "Nutritional yeast",
+                "Herbs",
+                "Olive oil"
+            ],
+            "steps": [
+                "Toast walnuts",
+                "Sauté vegetables",
+                "Cook lentils",
+                "Prepare tomato sauce",
+                "Combine all ingredients",
+                "Serve over pasta"
+            ],
+            "cookingUtensils": [
+                "Large pot",
+                "Food processor",
+                "Cutting board",
+                "Wooden spoon"
+            ],
+            "nutritionalInfo": {
+                "servings": 4,
+                "caloriesPerServing": 410,
+                "proteinPerServing": 22,
+                "carbsPerServing": 50,
+                "fatPerServing": 16,
+                "fiber": 15
+            },
+            "imageUrl": "https://www.justspices.co.uk/media/opti_image/webp/recipe/resized/510x510/recipe/Vegetarian_Lentil_Bolognese.webp",
+            "prepTime": "20 minutes",
+            "cookTime": "40 minutes"
+        },
+        {
+            "id": 5,
+            "name": "Thai Green Curry with Tofu",
+            "cuisine": "Vegan Thai",
+            "dietaryInfo": {
+                "type": ["Vegan", "Gluten-Free"],
+                "restrictions": ["No Animal Products"],
+                "suitableFor": ["Plant-Based Diets", "Soy Protein Diets"],
+                "allergens": ["Soy", "Potential Nuts"],
+                "proteinSource": "Tofu"
+            },
+            "ingredients": [
+                "Firm tofu",
+                "Green curry paste",
+                "Coconut milk",
+                "Bamboo shoots",
+                "Thai eggplant",
+                "Green beans",
+                "Thai basil",
+                "Lime",
+                "Jasmine rice"
+            ],
+            "steps": [
+                "Press and cube tofu",
+                "Prepare curry paste",
+                "Sauté vegetables",
+                "Add coconut milk",
+                "Simmer tofu in sauce",
+                "Garnish with fresh herbs"
+            ],
+            "cookingUtensils": [
+                "Wok",
+                "Cutting board",
+                "Rice cooker"
+            ],
+            "nutritionalInfo": {
+                "servings": 3,
+                "caloriesPerServing": 380,
+                "proteinPerServing": 18,
+                "carbsPerServing": 35,
+                "fatPerServing": 22,
+                "fiber": 6
+            },
+            "imageUrl": "https://pinchofyum.com/cdn-cgi/image/width=680,height=99999,fit=scale-down/wp-content/uploads/Green-Curry-5.jpg",
+            "prepTime": "20 minutes",
+            "cookTime": "25 minutes"
+        },
+        {
+            "id": 6,
+            "name": "Quinoa Stuffed Bell Peppers",
+            "cuisine": "Mediterranean-Inspired Vegan",
+            "dietaryInfo": {
+                "type": ["Vegan", "Gluten-Free"],
+                "restrictions": ["No Animal Products"],
+                "suitableFor": ["Plant-Based Diets", "Whole Grain Diets"],
+                "allergens": ["None"],
+                "nutrientDense": true
+            },
+            "ingredients": [
+                "Quinoa",
+                "Bell peppers",
+                "Black beans",
+                "Corn",
+                "Tomatoes",
+                "Spinach",
+                "Nutritional yeast",
+                "Cumin",
+                "Smoked paprika",
+                "Olive oil"
+            ],
+            "steps": [
+                "Cook quinoa",
+                "Mix with beans and vegetables",
+                "Season filling",
+                "Stuff bell peppers",
+                "Bake until peppers are tender",
+                "Garnish with nutritional yeast"
+            ],
+            "cookingUtensils": [
+                "Baking dish",
+                "Rice cooker",
+                "Cutting board"
+            ],
+            "nutritionalInfo": {
+                "servings": 4,
+                "caloriesPerServing": 320,
+                "proteinPerServing": 15,
+                "carbsPerServing": 50,
+                "fatPerServing": 8,
+                "fiber": 10
+            },
+            "imageUrl": "https://plantbasedonabudget.com/wp-content/uploads/2013/07/Vegan-Quinoa-Stuffed-Peppers-Plant-Based-on-a-Budget-13-819x1024.jpg",
+            "prepTime": "15 minutes",
+            "cookTime": "35 minutes"
+        },
+        {
+            "id": 7,
+            "name": "Chickpea Tikka Masala",
+            "cuisine": "Vegan Indian",
+            "dietaryInfo": {
+                "type": ["Vegan", "Gluten-Free"],
+                "restrictions": ["No Dairy", "No Animal Products"],
+                "suitableFor": ["Plant-Based Diets", "Legume Protein Diets"],
+                "allergens": ["None"],
+                "proteinSource": "Chickpeas"
+            },
+            "ingredients": [
+                "Chickpeas",
+                "Coconut milk",
+                "Tomato sauce",
+                "Garam masala",
+                "Turmeric",
+                "Garlic",
+                "Ginger",
+                "Onion",
+                "Cilantro",
+                "Basmati rice"
+            ],
+            "steps": [
+                "Sauté aromatics",
+                "Add spices",
+                "Incorporate coconut milk",
+                "Simmer chickpeas",
+                "Cook until sauce thickens",
+                "Serve over basmati rice"
+            ],
+            "cookingUtensils": [
+                "Large skillet",
+                "Rice cooker",
+                "Cutting board"
+            ],
+            "nutritionalInfo": {
+                "servings": 4,
+                "caloriesPerServing": 350,
+                "proteinPerServing": 16,
+                "carbsPerServing": 45,
+                "fatPerServing": 15,
+                "fiber": 12
+            },
+            "imageUrl": "https://naturallieplantbased.com/wp-content/uploads/2023/10/vegan-tikka-masala-4.jpg",
+            "prepTime": "15 minutes",
+            "cookTime": "30 minutes"
+        },
+        {
+            "id": 8,
+            "name": "Mediterranean Stuffed Grape Leaves",
+            "cuisine": "Vegan Mediterranean",
+            "dietaryInfo": {
+                "type": ["Vegan", "Gluten-Free"],
+                "restrictions": ["No Animal Products"],
+                "suitableFor": ["Plant-Based Diets", "Raw Food Diets"],
+                "allergens": ["None"],
+                "traditionalDish": true
+            },
+            "ingredients": [
+                "Grape leaves",
+                "Brown rice",
+                "Pine nuts",
+                "Tomatoes",
+                "Onion",
+                "Parsley",
+                "Mint",
+                "Olive oil",
+                "Lemon juice",
+                "Cumin"
+            ],
+            "steps": [
+                "Prepare rice mixture",
+                "Stuff grape leaves",
+                "Roll tightly",
+                "Steam or simmer",
+                "Drizzle with olive oil",
+                "Serve with lemon wedges"
+            ],
+            "cookingUtensils": [
+                "Large pot",
+                "Cutting board",
+                "Rolling surface"
+            ],
+            "nutritionalInfo": {
+                "servings": 6,
+                "caloriesPerServing": 280,
+                "proteinPerServing": 8,
+                "carbsPerServing": 40,
+                "fatPerServing": 12,
+                "fiber": 6
+            },
+            "imageUrl": "https://cdn77-s3.lazycatkitchen.com/wp-content/uploads/2020/07/vegan-stuffed-grape-leaves-portion-800x1200.jpg",
+            "prepTime": "30 minutes",
+            "cookTime": "45 minutes"
+        },
+        {
+            "id": 9,
+            "name": "African Peanut Stew",
+            "cuisine": "Vegan African-Inspired",
+            "dietaryInfo": {
+                "type": ["Vegan", "Gluten-Free"],
+                "restrictions": ["No Animal Products"],
+                "suitableFor": ["Plant-Based Diets", "High Protein Diets"],
+                "allergens": ["Peanuts"],
+                "proteinSource": "Peanuts and Sweet Potatoes"
+            },
+            "ingredients": [
+                "Sweet potatoes",
+                "Chickpeas",
+                "Peanut butter",
+                "Tomatoes",
+                "Kale",
+                "Onion",
+                "Garlic",
+                "Ginger",
+                "Vegetable broth",
+                "Cumin"
+            ],
+            "steps": [
+                "Sauté aromatics",
+                "Add sweet potatoes",
+                "Incorporate peanut butter",
+                "Add vegetable broth",
+                "Simmer with chickpeas",
+                "Stir in kale at end"
+            ],
+            "cookingUtensils": [
+                "Large pot",
+                "Cutting board",
+                "Wooden spoon"
+            ],
+            "nutritionalInfo": {
+                "servings": 4,
+                "caloriesPerServing": 400,
+                "proteinPerServing": 20,
+                "carbsPerServing": 45,
+                "fatPerServing": 18,
+                "fiber": 14
+            },
+            "imageUrl": "https://www.cottercrunch.com/wp-content/uploads/2020/09/African-peanut-stew-with-meat-IP-option-7.jpg.webp",
+            "prepTime": "20 minutes",
+            "cookTime": "40 minutes"
+        },
+        {
+            "recipes": [
+                {
+                    "id": 10,
+                    "name": "Eggplant Moussaka",
+                    "cuisine": "Vegan Greek Adaptation",
+                    "dietaryInfo": {
+                        "type": ["Vegan", "Gluten-Free Option"],
+                        "restrictions": ["No Animal Products"],
+                        "suitableFor": ["Plant-Based Diets", "Mediterranean Diets"],
+                        "allergens": ["Potential Nuts"],
+                        "glutenFreeOption": "Use gluten-free breadcrumbs",
+                        "proteinSource": "Lentils and Nuts"
+                    },
+                    "ingredients": [
+                        "Eggplant",
+                        "Lentils",
+                        "Walnuts",
+                        "Tomato sauce",
+                        "Onions",
+                        "Garlic",
+                        "Cinnamon",
+                        "Oregano",
+                        "Nutritional yeast",
+                        "Breadcrumbs",
+                        "Cashew cream",
+                        "Olive oil"
+                    ],
+                    "steps": [
+                        "Slice and roast eggplant",
+                        "Prepare lentil and walnut meat sauce",
+                        "Create cashew béchamel",
+                        "Layer eggplant and lentil sauce",
+                        "Top with cashew cream",
+                        "Sprinkle with breadcrumbs",
+                        "Bake until golden"
+                    ],
+                    "cookingUtensils": [
+                        "Baking dish",
+                        "Cutting board",
+                        "Blender",
+                        "Skillet"
+                    ],
+                    "nutritionalInfo": {
+                        "servings": 6,
+                        "caloriesPerServing": 380,
+                        "proteinPerServing": 22,
+                        "carbsPerServing": 35,
+                        "fatPerServing": 20,
+                        "fiber": 12
+                    },
+                    "imageUrl": "https://www.recipetineats.com/tachyon/2020/11/Greek-Moussaka_3-re-edited.jpg?resize=900%2C1125&zoom=0.72",
+                    "prepTime": "45 minutes",
+                    "cookTime": "50 minutes"
+                }
+            ]
+        },
+        {
+            "id": 11,
+            "name": "Beef Wellington",
+            "cuisine": "British",
+            "dietaryInfo": {
+                "type": ["Non-Vegetarian", "High Protein"],
+                "restrictions": ["Contains Red Meat"],
+                "suitableFor": ["Carnivore Diets", "Keto-Friendly"],
+                "allergens": ["Gluten", "Dairy"],
+                "proteinSource": "Beef Tenderloin"
+            },
+            "ingredients": [
+                "Beef tenderloin",
+                "Puff pastry",
+                "Mushroom duxelles",
+                "Prosciutto",
+                "Dijon mustard",
+                "Eggs",
+                "Fresh thyme",
+                "Shallots",
+                "Garlic",
+                "Salt",
+                "Black pepper"
+            ],
+            "steps": [
+                "Sear beef tenderloin",
+                "Prepare mushroom duxelles",
+                "Wrap beef in prosciutto",
+                "Cover with mushroom mixture",
+                "Encase in puff pastry",
+                "Brush with egg wash",
+                "Bake until golden"
+            ],
+            "cookingUtensils": [
+                "Skillet",
+                "Baking sheet",
+                "Pastry brush",
+                "Meat thermometer"
+            ],
+            "nutritionalInfo": {
+                "servings": 4,
+                "caloriesPerServing": 580,
+                "proteinPerServing": 42,
+                "carbsPerServing": 25,
+                "fatPerServing": 35,
+                "cholesterol": 180
+            },
+            "imageUrl": "https://www.sainsburysmagazine.co.uk/uploads/media/720x770/07/11157-Wellington.jpg?v=1-0",
+            "prepTime": "1 hour",
+            "cookTime": "40 minutes"
+        },
+        {
+            "id": 12,
+            "name": "Korean Bulgogi",
+            "cuisine": "Korean",
+            "dietaryInfo": {
+                "type": ["Non-Vegetarian", "High Protein"],
+                "restrictions": ["Contains Red Meat"],
+                "suitableFor": ["Low-Carb Diets"],
+                "allergens": ["Soy", "Potential Gluten"],
+                "proteinSource": "Beef Sirloin"
+            },
+            "ingredients": [
+                "Beef sirloin",
+                "Soy sauce",
+                "Sesame oil",
+                "Brown sugar",
+                "Garlic",
+                "Ginger",
+                "Green onions",
+                "Sesame seeds",
+                "Asian pear",
+                "Mirin"
+            ],
+            "steps": [
+                "Thinly slice beef",
+                "Prepare marinade",
+                "Marinate beef for 2 hours",
+                "Grill or pan-fry",
+                "Garnish with green onions",
+                "Serve with steamed rice"
+            ],
+            "cookingUtensils": [
+                "Grill or skillet",
+                "Mixing bowl",
+                "Cutting board"
+            ],
+            "nutritionalInfo": {
+                "servings": 4,
+                "caloriesPerServing": 320,
+                "proteinPerServing": 35,
+                "carbsPerServing": 15,
+                "fatPerServing": 12,
+                "cholesterol": 110
+            },
+            "imageUrl": "https://s23209.pcdn.co/wp-content/uploads/2019/04/240124_DD_korean-beef-bulgogi_274-760x1140.jpg",
+            "prepTime": "2 hours 30 minutes",
+            "cookTime": "10 minutes"
+        },
+        {
+            "id": 13,
+            "name": "Jambalaya",
+            "cuisine": "Creole",
+            "dietaryInfo": {
+                "type": ["Non-Vegetarian", "Mixed Protein"],
+                "restrictions": ["Contains Shellfish"],
+                "suitableFor": ["Spicy Food Lovers"],
+                "allergens": ["Shellfish"],
+                "proteinSource": ["Chicken", "Andouille Sausage", "Shrimp"]
+            },
+            "ingredients": [
+                "Chicken thighs",
+                "Andouille sausage",
+                "Shrimp",
+                "Long-grain rice",
+                "Bell peppers",
+                "Onions",
+                "Celery",
+                "Tomatoes",
+                "Cajun seasoning",
+                "Garlic",
+                "Chicken stock"
+            ],
+            "steps": [
+                "Brown meats separately",
+                "Sauté vegetables",
+                "Add rice and seasonings",
+                "Pour in chicken stock",
+                "Simmer until rice is tender",
+                "Add shrimp at end"
+            ],
+            "cookingUtensils": [
+                "Large Dutch oven",
+                "Wooden spoon",
+                "Cutting board"
+            ],
+            "nutritionalInfo": {
+                "servings": 6,
+                "caloriesPerServing": 480,
+                "proteinPerServing": 38,
+                "carbsPerServing": 40,
+                "fatPerServing": 18,
+                "cholesterol": 220
+            },
+            "imageUrl": "https://cafedelites.com/wp-content/uploads/2020/02/rsz_jambalaya-image-54-2.jpg",
+            "prepTime": "30 minutes",
+            "cookTime": "45 minutes"
+        },
+        {
+            "id": 14,
+            "name": "Peking Duck",
+            "cuisine": "Chinese",
+            "dietaryInfo": {
+                "type": ["Non-Vegetarian", "Traditional"],
+                "restrictions": ["Contains Poultry"],
+                "suitableFor": ["Gourmet Diets"],
+                "allergens": ["Wheat in Pancakes"],
+                "proteinSource": "Duck"
+            },
+            "ingredients": [
+                "Whole duck",
+                "Maltose",
+                "Soy sauce",
+                "Honey",
+                "Five-spice powder",
+                "Ginger",
+                "Garlic",
+                "Cucumber",
+                "Green onions",
+                "Mandarin pancakes",
+                "Hoisin sauce"
+            ],
+            "steps": [
+                "Prepare duck skin",
+                "Air-dry overnight",
+                "Roast duck until crispy",
+                "Prepare pancakes",
+                "Slice duck",
+                "Serve with accompaniments"
+            ],
+            "cookingUtensils": [
+                "Roasting pan",
+                "Meat hooks",
+                "Sharp knife"
+            ],
+            "nutritionalInfo": {
+                "servings": 4,
+                "caloriesPerServing": 620,
+                "proteinPerServing": 45,
+                "carbsPerServing": 25,
+                "fatPerServing": 38,
+                "cholesterol": 180
+            },
+            "imageUrl": "https://whattocooktoday.com/wp-content/uploads/2015/03/peking-duck-2-1-683x1024.jpg",
+            "prepTime": "24 hours",
+            "cookTime": "1 hour"
+        },
+        {
+            "id": 15,
+            "name": "Brazilian Feijoada",
+            "cuisine": "Brazilian",
+            "dietaryInfo": {
+                "type": ["Non-Vegetarian", "Traditional"],
+                "restrictions": ["Contains Multiple Meats"],
+                "suitableFor": ["Hearty Eaters"],
+                "allergens": ["None"],
+                "proteinSource": ["Pork", "Beef", "Sausage"]
+            },
+            "ingredients": [
+                "Black beans",
+                "Pork shoulder",
+                "Beef jerky",
+                "Linguiça sausage",
+                "Bacon",
+                "Onions",
+                "Garlic",
+                "Bay leaves",
+                "Orange",
+                "White rice",
+                "Collard greens"
+            ],
+            "steps": [
+                "Soak beans overnight",
+                "Cook different meats separately",
+                "Combine with beans",
+                "Slow cook",
+                "Prepare accompaniments",
+                "Serve with rice and orange slices"
+            ],
+            "cookingUtensils": [
+                "Large pot",
+                "Cutting board",
+                "Wooden spoon"
+            ],
+            "nutritionalInfo": {
+                "servings": 6,
+                "caloriesPerServing": 580,
+                "proteinPerServing": 45,
+                "carbsPerServing": 40,
+                "fatPerServing": 32,
+                "cholesterol": 220
+            },
+            "imageUrl": "https://www.allrecipes.com/thmb/9fWQTd_DPrCqETzxHDLdIt4Xeq0=/750x0/filters:no_upscale():max_bytes(150000):strip_icc()/AR-139208-Feijoada-DDMFS-4x3-74a3fbca83d947f9b6f330ef01999c89.jpg",
+            "prepTime": "12 hours",
+            "cookTime": "3 hours"
+        },
+        {
+            "id": 16,
+            "name": "Chicken Alfredo",
+            "cuisine": "Italian",
+            "dietaryInfo": {
+                "type": ["Non-Vegetarian"],
+                "restrictions": ["Contains Dairy"],
+                "suitableFor": ["Comfort Food Lovers"],
+                "allergens": ["Milk", "Gluten"],
+                "proteinSource": ["Chicken"]
+            },
+            "ingredients": [
+                "Fettuccine pasta",
+                "Chicken breast",
+                "Heavy cream",
+                "Parmesan cheese",
+                "Garlic",
+                "Butter",
+                "Olive oil",
+                "Salt",
+                "Black pepper"
+            ],
+            "steps": [
+                "Cook fettuccine according to package instructions",
+                "Season and pan-sear chicken breasts",
+                "Sauté garlic in butter and olive oil",
+                "Add heavy cream and bring to a simmer",
+                "Stir in parmesan cheese until melted",
+                "Toss cooked pasta and chicken in the sauce"
+            ],
+            "cookingUtensils": [
+                "Large pot",
+                "Pan",
+                "Wooden spoon",
+                "Knife"
+            ],
+            "nutritionalInfo": {
+                "servings": 4,
+                "caloriesPerServing": 600,
+                "proteinPerServing": 35,
+                "carbsPerServing": 60,
+                "fatPerServing": 25,
+                "cholesterol": 120
+            },
+            "imageUrl": "https://gimmedelicious.com/wp-content/uploads/2024/10/Skinny-Chicken-Broccoli-Alfredo-1097x1536.jpg",
+            "prepTime": "10 minutes",
+            "cookTime": "20 minutes"
+        },
+        {
+            "id": 17,
+            "name": "Vegetable Stir-Fry",
+            "cuisine": "Asian",
+            "dietaryInfo": {
+                "type": ["Vegetarian", "Vegan"],
+                "restrictions": ["Contains Soy"],
+                "suitableFor": ["Health-conscious Eaters", "Vegan"],
+                "allergens": ["Soy"],
+                "proteinSource": ["Tofu"]
+            },
+            "ingredients": [
+                "Tofu",
+                "Bell peppers",
+                "Carrot",
+                "Broccoli",
+                "Soy sauce",
+                "Sesame oil",
+                "Ginger",
+                "Garlic",
+                "Rice"
+            ],
+            "steps": [
+                "Press tofu to remove excess moisture",
+                "Cut vegetables into bite-sized pieces",
+                "Sauté garlic and ginger in sesame oil",
+                "Add tofu and vegetables, stir-fry until tender",
+                "Add soy sauce and toss to coat",
+                "Serve with rice"
+            ],
+            "cookingUtensils": [
+                "Wok",
+                "Knife",
+                "Spatula",
+                "Cutting board"
+            ],
+            "nutritionalInfo": {
+                "servings": 4,
+                "caloriesPerServing": 350,
+                "proteinPerServing": 15,
+                "carbsPerServing": 50,
+                "fatPerServing": 15,
+                "cholesterol": 0
+            },
+            "imageUrl": "https://www.wholesomeyum.com/wp-content/uploads/2020/11/wholesomeyum-Stir-Fry-Vegetables-15.jpg",
+            "prepTime": "15 minutes",
+            "cookTime": "10 minutes"
+        },
+        {
+            "id": 18,
+            "name": "Beef Tacos",
+            "cuisine": "Mexican",
+            "dietaryInfo": {
+                "type": ["Non-Vegetarian"],
+                "restrictions": ["Contains Gluten", "Contains Dairy"],
+                "suitableFor": ["Taco Lovers", "Mexican Cuisine Enthusiasts"],
+                "allergens": ["Gluten", "Dairy"],
+                "proteinSource": ["Ground beef"]
+            },
+            "ingredients": [
+                "Ground beef",
+                "Taco seasoning",
+                "Taco shells",
+                "Cheese",
+                "Lettuce",
+                "Tomatoes",
+                "Onions",
+                "Sour cream",
+                "Salsa"
+            ],
+            "steps": [
+                "Cook ground beef with taco seasoning",
+                "Warm taco shells in the oven",
+                "Assemble tacos with beef, cheese, lettuce, tomatoes, onions, sour cream, and salsa"
+            ],
+            "cookingUtensils": [
+                "Pan",
+                "Oven",
+                "Serving plate",
+                "Knife"
+            ],
+            "nutritionalInfo": {
+                "servings": 4,
+                "caloriesPerServing": 500,
+                "proteinPerServing": 30,
+                "carbsPerServing": 40,
+                "fatPerServing": 25,
+                "cholesterol": 80
+            },
+            "imageUrl": "https://www.onceuponachef.com/images/2023/08/Beef-Tacos-760x570.jpg",
+            "prepTime": "10 minutes",
+            "cookTime": "15 minutes"
+        },
+        {
+            "id": 19,
+            "name": "Shrimp Scampi",
+            "cuisine": "Italian",
+            "dietaryInfo": {
+                "type": ["Non-Vegetarian"],
+                "restrictions": ["Contains Dairy"],
+                "suitableFor": ["Seafood Lovers"],
+                "allergens": ["Shellfish", "Milk"],
+                "proteinSource": ["Shrimp"]
+            },
+            "ingredients": [
+                "Shrimp",
+                "Spaghetti",
+                "Garlic",
+                "Butter",
+                "Lemon",
+                "Parsley",
+                "Olive oil",
+                "Salt",
+                "Black pepper"
+            ],
+            "steps": [
+                "Cook spaghetti according to package instructions",
+                "Sauté garlic in butter and olive oil",
+                "Add shrimp and cook until pink",
+                "Toss pasta with shrimp, garlic, butter, lemon, and parsley"
+            ],
+            "cookingUtensils": [
+                "Pan",
+                "Large pot",
+                "Tongs",
+                "Knife"
+            ],
+            "nutritionalInfo": {
+                "servings": 4,
+                "caloriesPerServing": 450,
+                "proteinPerServing": 25,
+                "carbsPerServing": 50,
+                "fatPerServing": 18,
+                "cholesterol": 220
+            },
+            "imageUrl": "https://littlespoonfarm.com/wp-content/uploads/2024/06/shrimp-scampi-on-a-plate-with-sourdough-toast-1152x1536.jpg",
+            "prepTime": "10 minutes",
+            "cookTime": "15 minutes"
+        },
+        {
+            "id": 20,
+            "name": "Chocolate Chip Cookies",
+            "cuisine": "American",
+            "dietaryInfo": {
+                "type": ["Vegetarian"],
+                "restrictions": ["Contains Gluten", "Contains Dairy"],
+                "suitableFor": ["Cookie Lovers"],
+                "allergens": ["Gluten", "Milk"],
+                "proteinSource": ["Butter", "Egg"]
+            },
+            "ingredients": [
+                "Butter",
+                "Sugar",
+                "Brown sugar",
+                "Eggs",
+                "Vanilla extract",
+                "Flour",
+                "Baking soda",
+                "Salt",
+                "Chocolate chips"
+            ],
+            "steps": [
+                "Preheat oven to 350°F (175°C)",
+                "Cream butter, sugar, and brown sugar",
+                "Add eggs and vanilla, mix until smooth",
+                "Stir in flour, baking soda, and salt",
+                "Fold in chocolate chips",
+                "Scoop dough onto baking sheets",
+                "Bake for 10-12 minutes"
+            ],
+            "cookingUtensils": [
+                "Mixing bowl",
+                "Spoon",
+                "Baking sheet",
+                "Oven"
+            ],
+            "nutritionalInfo": {
+                "servings": 24,
+                "caloriesPerServing": 200,
+                "proteinPerServing": 2,
+                "carbsPerServing": 30,
+                "fatPerServing": 10,
+                "cholesterol": 25
+            },
+            "imageUrl": "https://cdn.loveandlemons.com/wp-content/uploads/2024/08/chocolate-chip-cookies-580x819.jpg",
+            "prepTime": "15 minutes",
+            "cookTime": "12 minutes"
+        }
+    ]
+}        
+        
