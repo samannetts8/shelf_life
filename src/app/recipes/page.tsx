@@ -176,7 +176,7 @@ export default function RecipesPage() {
     <div className={styles.container}>
       {/* Top Matches Section */}
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Top Matches!!</h2>
+        <h2 className={styles.sectionTitle}>Top Matches:</h2>
         
         {loading ? (
           <p>Loading top matches...</p>
@@ -197,7 +197,7 @@ export default function RecipesPage() {
 
       {/* Other Matches Section */}
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Other matches</h2>
+        <h2 className={styles.sectionTitle}>More Recipes:</h2>
         
         {loading ? (
           <p>Loading suggestions...</p>
