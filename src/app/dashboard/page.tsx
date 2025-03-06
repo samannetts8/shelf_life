@@ -15,7 +15,7 @@ export default async function Dashboard() {
 
   return (
     <MobileLayout>
-      <Fridge userId={data.user.id} />
+      <Fridge />
     </MobileLayout>
   );
 }
