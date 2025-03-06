@@ -6,23 +6,49 @@ import OpenAI from "openai";
 
 export async function getAiRecipes(ingredients: FoodItemType[]) {
   console.log("Getting recipes from HuggingFace AI using ingredients");
+  let ingredientsArray = ingredients.map((item) => item.name);
+  const prompt = `
+You are a helpful AI chef. Please create a detailed and structured recipe using the following ingredients: ${ingredientsArray.join(
+    ", "
+  )}.
+
+Return the recipe as a JSON object with the following structure:
+{
+  "title": "Recipe Name",
+  "ingredients": [
+    "List item 1",
+    "List item 2"
+  ],
+  "instructions": "Step-by-step cooking process",
+  "emoji": "A relevant emoji",
+  "tip": "A useful cooking tip"
+}
+`.trim();
 
   try {
     // Fix: Pass token directly as a string
-    const hf = new HfInference(process.env.HUGGINGFACE_API_TOKEN as string);
-
-    const prompt = `Existing recipes using as many of these ingredients as possible: ${ingredients.join(
-      ","
-    )}`;
-    const response = await hf.textGeneration({
-      model: "mistralai/Mistral-7B-Instruct-v0.1",
-      inputs: prompt,
-      parameters: {
-        max_new_tokens: 250,
-        temperature: 0.7,
-      },
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
     });
-    const generatedText = response.generated_text;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a helpful chef assistant that responds in JSON format.",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.7,
+    });
+    let generatedText = response.choices[0].message.content;
+    console.log("Generated Text:", generatedText);
     return [
       {
         recipeDetails: generatedText,
@@ -163,48 +189,65 @@ export async function POST(request: Request) {
       }
 
       const hf = new HfInference(hfToken);
+      const ingredientsArray = Array.isArray(ingredients)
+        ? ingredients
+        : [ingredients];
 
-      const prompt = `Fetch ${numAiRecipesNeeded} recipe from the internet that includes these ingredients: ${ingredients}
-For each recipe provide:
-1. A creative title
-2. A list of ingredients (including the ones provided plus basic pantry items)
-3. Step-by-step cooking instructions
-4. An appropriate emoji
+      const prompt = `
+You are a helpful AI chef. Please create a detailed and structured recipe using the following ingredients: ${ingredientsArray.join(
+        ", "
+      )}.
 
-Format your response exactly like this:
-
-Recipe 1:
-Title: [Recipe title]
-Ingredients:
-- [ingredient 1]
-- [ingredient 2]
-Instructions:
-[numbered step-by-step instructions]
-Emoji: [emoji]
-
-Recipe 2:
-[and so on...]
-      `;
+Return the recipe as a JSON object with the following structure:
+{
+  "title": "Recipe Name",
+  "ingredients": [
+    "List item 1",
+    "List item 2"
+  ],
+  "instructions": "Step-by-step cooking process",
+  "emoji": "A relevant emoji",
+  "tip": "A useful cooking tip"
+}
+`.trim();
 
       console.log("Calling HuggingFace API...");
 
       // Try with a more capable model (Mistral-7B-Instruct-v0.1)
-      const response = await hf.textGeneration({
-        model: "mistralai/Mistral-7B-Instruct-v0.1", // More capable model
-        inputs: prompt,
-        parameters: {
-          max_new_tokens: 500,
-          temperature: 0.7,
-        },
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
       });
 
-      console.log("Received response from HuggingFace");
-      const generatedText = response.generated_text;
-      console.log("Raw HuggingFace Response:", response);
-      console.log("Generated Text:", response.generated_text);
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a helpful chef assistant that responds in JSON format.",
+          },
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.7,
+      });
+      const generatedText = response.choices[0].message.content;
+      console.log("Generated Text:", generatedText);
+
+      console.log("Received response from OpenAI");
+      console.log("Raw OpenAI Response:", response);
+      console.log("Generated Text:", response.choices[0].message.content);
 
       // Try to parse the response
-      aiRecipes = parseGeneratedRecipes(generatedText, numAiRecipesNeeded);
+      if (generatedText) {
+        aiRecipes = parseGeneratedRecipes(generatedText, numAiRecipesNeeded);
+      } else {
+        console.error("Generated text is null");
+        aiRecipes = [];
+      }
       console.log(`Successfully parsed ${aiRecipes.length} AI recipes`);
 
       // If we couldn't parse enough recipes, use fallbacks
@@ -249,7 +292,44 @@ Recipe 2:
   }
 }
 
+// Replace your parseGeneratedRecipes function with this one
 function parseGeneratedRecipes(generatedText: string, numRecipes: number) {
+  try {
+    // Try parsing the response as JSON first
+    const jsonResponse = JSON.parse(generatedText);
+
+    // Check if it's a valid recipe object
+    if (
+      jsonResponse.title &&
+      jsonResponse.ingredients &&
+      jsonResponse.instructions
+    ) {
+      return [
+        {
+          title: jsonResponse.title,
+          ingredients: Array.isArray(jsonResponse.ingredients)
+            ? jsonResponse.ingredients
+            : jsonResponse.ingredients.split("\n"),
+          instructions: jsonResponse.instructions,
+          emoji: jsonResponse.emoji || "🍳",
+          tip: jsonResponse.tip || "",
+          source: "ai",
+        },
+      ];
+    }
+
+    // If we get here, the JSON didn't have the expected structure,
+    // fall back to the regex parsing
+    return parseWithRegex(generatedText, numRecipes);
+  } catch (error) {
+    console.error("Error parsing JSON response:", error);
+    // If JSON parsing fails, try the regex approach
+    return parseWithRegex(generatedText, numRecipes);
+  }
+}
+
+// Move the original parsing logic to this helper function
+function parseWithRegex(generatedText: string, numRecipes: number) {
   const recipes = [];
   const recipeRegex =
     /Recipe \d+:\s*Title:\s*(.*?)\s*Ingredients:\s*([\s\S]*?)\s*Instructions:\s*([\s\S]*?)\s*Emoji:\s*(.*?)(?=\nRecipe \d+:|$)/g;
@@ -263,7 +343,8 @@ function parseGeneratedRecipes(generatedText: string, numRecipes: number) {
       title: title.trim(),
       ingredients: ingredients
         .split("\n")
-        .map((i: string) => i.replace(/^- /, "").trim()),
+        .map((i: string) => i.replace(/^- /, "").trim())
+        .filter(Boolean),
       instructions: instructions.trim(),
       emoji: emoji.trim(),
       source: "ai",
