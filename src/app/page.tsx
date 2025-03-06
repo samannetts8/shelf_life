@@ -9,7 +9,9 @@ import "animate.css";
 export default function Home() {
   return (
     <div className={styles.container}>
-      <div className={styles.images}>
+      <div
+        className={`animate__animated animate__slideInDown animate__delay-5s ${styles.images}`}
+      >
         <Image
           src="/steak.png"
           alt="Steak"
