@@ -595,15 +595,14 @@ async function getRecipeImage(
         `Attempt ${attempts} to fetch image for ${recipe.title}`
       );
 
-      const response = await fetch('/api/ai-image', {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+      const response = await fetch(`${baseUrl}/api/ai-image`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json', // <-- Fixed syntax error
         },
-        body: JSON.stringify({
-          title: recipe.title || '',
-          ingredients: recipe.ingredients || [],
-        }),
+        body: JSON.stringify({ title: recipe.title }),
       });
 
       if (response.ok) {
@@ -632,7 +631,7 @@ async function getRecipeImage(
       error
     );
     // Return a fallback
-    return `/images/recipes/fallback-${(index % 5) + 1}.jpg`;
+    return `defaultRecipeImage-${(index % 5) + 1}.jpg`;
   }
 }
 

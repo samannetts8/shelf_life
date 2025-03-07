@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { getRecipeImage } from '@/app/services/spoonacular-service';
+import { getRecipeImage } from '@/app/services/spoon-service';
 import {
   DISH_TYPES,
   SPECIFIC_INGREDIENTS,
-} from '../../constants/food-dishes';
+} from '@/app/constants/food-dishes';
 
 // Helper function to extract main dish type
 function extractDishType(title: string): string {
@@ -96,8 +96,9 @@ export async function POST(request: Request) {
     }
 
     // Get image from Spoonacular
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const imageUrl = await getRecipeImage(title);
-    console.log('Found image from Spoonacular:', imageUrl);
 
     // Cache the result
     if (recipeId) {
@@ -108,93 +109,17 @@ export async function POST(request: Request) {
       });
     }
 
-    const response = {
+    return NextResponse.json({
       imageUrl,
       source: 'spoonacular',
-    };
-
-    console.log('Returning image response:', response);
-    return NextResponse.json(response);
+    });
   } catch (error) {
     console.error('Error getting recipe image:', error);
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     return NextResponse.json({
-      imageUrl: '/images/recipes/default.jpg',
+      imageUrl: `${baseUrl}/images/recipes/default.jpg`,
       source: 'fallback',
     });
   }
-}
-
-// Function to get a direct Unsplash Source URL (no API key needed)
-function getUnsplashSourceUrl(
-  title: string,
-  ingredients?: string[]
-): string {
-  // Get the main dish type from the title
-  const titleLower = title.toLowerCase();
-  const mainDishType =
-    DISH_TYPES.find((type) => titleLower.includes(type)) || '';
-
-  // Find specific ingredients in title
-  const foundIngredient =
-    SPECIFIC_INGREDIENTS.find((ing) => titleLower.includes(ing)) ||
-    '';
-
-  // Build search query with prioritized terms
-  let searchTerms = [];
-
-  // 1. Add main dish type if found (highest priority)
-  if (mainDishType) {
-    searchTerms.push(mainDishType);
-  }
-
-  // 2. Add specific ingredient if found
-  if (foundIngredient) {
-    searchTerms.push(foundIngredient);
-  }
-
-  // 3. If we don't have enough terms, extract from title (ignore common words)
-  if (searchTerms.length < 2) {
-    const titleWords = title
-      .toLowerCase()
-      .replace(
-        /recipe|dish|meal|quick|easy|homemade|delicious|with|and|the|for|&|from/g,
-        ' '
-      )
-      .split(/\s+/)
-      .filter((word) => word.length > 3);
-
-    // Take up to 2 significant words from title
-    for (const word of titleWords) {
-      if (!searchTerms.includes(word) && searchTerms.length < 2) {
-        searchTerms.push(word);
-      }
-    }
-  }
-
-  // 4. If we have ingredients list, add the first one if not already included
-  if (ingredients?.length && searchTerms.length < 3) {
-    const firstIngredient = ingredients[0]
-      .split(' ')[0]
-      .toLowerCase();
-    if (
-      firstIngredient.length > 3 &&
-      !searchTerms.includes(firstIngredient)
-    ) {
-      searchTerms.push(firstIngredient);
-    }
-  }
-
-  // 5. Always add "dish" and "food" to get food photography
-  searchTerms.push('dish', 'food');
-
-  // Create query string with only unique terms
-  const uniqueTerms = [...new Set(searchTerms)];
-  const query = uniqueTerms.join(',');
-
-  console.log(`Image search query for "${title}": ${query}`);
-
-  // Return the Unsplash source URL
-  return `https://source.unsplash.com/400x300/?${encodeURIComponent(
-    query
-  )}`;
 }

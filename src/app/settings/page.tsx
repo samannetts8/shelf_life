@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { MobileLayout } from "../components/mobile-layout";
-import ClientLayout from "../ClientLayout";
+import { MobileLayout } from "@/app/components/mobile-layout";
+import ClientLayout from "@/app/ClientLayout";
 import styles from "./settings.module.css";
-import { useAuth } from "../hooks/use-auth";
+import { useAuth } from "@/app/hooks/use-auth";
 import { useRouter } from "next/navigation";
 // import styles from "../components/Mobile-layout.module";
 
