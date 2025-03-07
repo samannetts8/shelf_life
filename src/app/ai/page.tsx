@@ -138,9 +138,10 @@ function AIRecipeContent() {
             <ul className={styles.ingredientsList}>
               {expiringSoon.map((item) => (
                 <li key={item.id} className={styles.listItem}>
-                  <b>{item.name}</b> - {item.quantity} {item.unit}
+                  <b>{item.name}{`\u00A0`}</b> - {item.quantity}{' '}
+                  {item.unit}
                   <span className={styles.expiryDate}>
-                    {` Expires:`}{' '}
+                    {` \u00A0 Expires: `}
                     {new Date(item.expiry_date).toLocaleDateString()}
                   </span>
                 </li>
