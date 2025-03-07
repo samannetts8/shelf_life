@@ -1,5 +1,4 @@
-Base button styles
-.base {
+Base button styles .base {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -14,7 +13,8 @@ Base button styles
 
 .base:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--ring-color, #0ea5e9), 0 0 0 4px var(--ring-offset-color, white);
+  box-shadow: 0 0 0 2px var(--ring-color, #0ea5e9),
+    0 0 0 4px var(--ring-offset-color, white);
 }
 
 .base:disabled {
