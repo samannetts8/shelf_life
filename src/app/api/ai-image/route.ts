@@ -115,11 +115,44 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error('Error getting recipe image:', error);
-    const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    return NextResponse.json({
-      imageUrl: `${baseUrl}/images/recipes/default.jpg`,
-      source: 'fallback',
-    });
+
+    try {
+      const defaultPath = '/defaultRecipeImage.jpg';
+      const testResponse = await fetch(
+        `http://localhost:3000${defaultPath}`,
+        { method: 'HEAD' }
+      );
+
+      console.log(
+        `Default image test (from API): ${testResponse.status}`
+      );
+
+      if (testResponse.ok) {
+        return NextResponse.json({
+          imageUrl: defaultPath,
+          source: 'fallback',
+        });
+      } else {
+        console.error(
+          `Default image not found in API route (status: ${testResponse.status})`
+        );
+        // Use external image
+        return NextResponse.json({
+          imageUrl:
+            'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=500',
+          source: 'external-fallback',
+        });
+      }
+    } catch (testError) {
+      console.error(
+        'Error testing default image from API route:',
+        testError
+      );
+      return NextResponse.json({
+        imageUrl:
+          'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=500',
+        source: 'external-fallback',
+      });
+    }
   }
 }

@@ -127,18 +127,20 @@ function AIRecipeContent() {
         <h1 className={styles.title}>AI Recipe Suggestions</h1>
 
         <div className={styles.ingredientsSection}>
-          <h2>Ingredients Expiring Soon</h2>
+          <h2 className={styles.subTitle}>
+            Ingredients Expiring Soon
+          </h2>
           {loading ? (
-            <p>Loading ingredients...</p>
+            <p className={styles.loading}>Loading ingredients...</p>
           ) : expiringSoon.length === 0 ? (
             <p>No ingredients expiring soon</p>
           ) : (
             <ul className={styles.ingredientsList}>
               {expiringSoon.map((item) => (
-                <li key={item.id}>
-                  {item.name} - {item.quantity} {item.unit}
+                <li key={item.id} className={styles.listItem}>
+                  <b>{item.name}</b> - {item.quantity} {item.unit}
                   <span className={styles.expiryDate}>
-                    Expires:{' '}
+                    {` Expires:`}{' '}
                     {new Date(item.expiry_date).toLocaleDateString()}
                   </span>
                 </li>

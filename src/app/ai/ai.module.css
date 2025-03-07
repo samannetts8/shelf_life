@@ -2,6 +2,7 @@
 .container {
     display: flex;
     flex-direction: column;
+    align-items: center;
     max-width: 500px;
     margin: 0 auto;
     padding: 16px;
@@ -10,115 +11,56 @@
     background-color: #f5f5f5;
     min-height: 100vh;
     gap: 24px;
-  }
+   }
   
   /* Section Styles */
   .section {
     width: 100%;
     margin-bottom: 20px;
-  }
+    }
   
   .sectionTitle {
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 16px;
     color: #333;
-  }
-  
-  /* Cards Container */
-  .cardsContainer {
-    display: flex;
-    gap: 30px;
-    row-gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  /* Carousel Styles */
-  .carouselContainer {
-    position: relative;
-    width: 100%;
-  }
-  
-  .carousel {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 12px;
-    padding: 4px 0;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    cursor: grab; /* Show grab cursor */
-    user-select: none; /* Prevent text selection while dragging */
-  }
-  
-  .carousel:active {
-    cursor: grabbing; /* Show grabbing cursor while dragging */
-  }
-  
-  .carousel::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-  }
-  
-  .carouselButton {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(255, 255, 255, 0.7);
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 1;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .leftButton {
-    left: -10px;
-  }
-  
-  .rightButton {
-    right: -10px;
-  }
-  
-  /* Recipe Card Styles */
+    }
+
+    .recipesContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      row-gap: 0.2rem;
+      }
+
+   
+   /* Recipe Card Styles */
   .recipeCard {
     min-width: 150px;
     width: calc(33% - 8px);
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px 3px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     transition: transform 0.2s;
     margin-bottom: 10px;
     scroll-snap-align: start;
-  }
+    transition: 150ms ease-out;
+    margin: 1rem 0;
+      }
   
   .recipeCard:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
-  
-  .orangeCard {
-    border: 2px solid #ff7f50;
-  }
-  
-  .tealCard {
-    border: 2px solid #20b2aa;
-  }
-  
+   
   .recipeImageContainer {
     height: 200px;
     background-color: #e0e0e0;
     position: relative;
     overflow: hidden;
-  }
+    }
   
   .recipeImage {
     width: 100%;
@@ -189,29 +131,6 @@
     margin-top: 10px;
   }
   
-  .actionButton {
-    text-decoration: none;
-    flex: 1;
-  }
-  
-  .fullDatabaseBtn, .aiSuggestionBtn {
-    padding: 16px;
-    border-radius: 30px;
-    text-align: center;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .fullDatabaseBtn {
-    background-color: #222;
-    color: white;
-  }
-  
-  .aiSuggestionBtn {
-    background-color: #ffc107;
-    color: #333;
-  }
   
   .fullDatabaseBtn:hover, .aiSuggestionBtn:hover {
     transform: translateY(-2px);
@@ -236,3 +155,47 @@
       flex-direction: column;
     }
   }
+
+
+.ingredientsList{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  row-gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.listItem {
+  display: flex;
+  list-style: none;
+  background-color: #ffedd6;
+  border-radius: 0.3rem;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  padding-left: 0.7rem;
+  box-shadow: 0 2px 4px #0000001a;
+  height: 4.2rem;
+  align-items: center;
+  line-height: 1.9;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.generateButton {
+  all: unset;
+  background-color: #ffc107;
+  color: #000;
+  font-weight: 600;
+  border-radius: 0.3rem;
+  width: 8rem;
+  height: 1.1rem;
+  text-align: center;
+  padding: 1rem;
+  line-height: 0.8em;
+  box-shadow: 0 2px 3px 2px #0000001a;
+  margin-bottom: 1rem;
+}

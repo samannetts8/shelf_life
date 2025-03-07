@@ -578,8 +578,6 @@ function generateFallbackRecipes(
   }));
 }
 
-// Update the getRecipeImage function to be more reliable:
-
 async function getRecipeImage(
   recipe: Recipe,
   index: number
@@ -600,7 +598,7 @@ async function getRecipeImage(
       const response = await fetch(`${baseUrl}/api/ai-image`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', // <-- Fixed syntax error
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ title: recipe.title }),
       });
@@ -620,18 +618,45 @@ async function getRecipeImage(
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
-    // If all attempts fail, use a numbered fallback to ensure uniqueness
+    // If all attempts fail, use a completely different approach for the fallback image
     console.warn(
       `Failed to fetch image for ${recipe.title} after ${maxAttempts} attempts`
     );
-    return `/images/recipes/fallback-${(index % 5) + 1}.jpg`;
+
+    // Try a fetch to validate the default image exists
+    try {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+      const defaultPath = '/defaultRecipeImage.jpg';
+      const testResponse = await fetch(`${baseUrl}${defaultPath}`, {
+        method: 'HEAD',
+      });
+
+      console.log(
+        `Default image test response: ${testResponse.status}`
+      );
+
+      if (testResponse.ok) {
+        console.log('Default image confirmed accessible');
+        return defaultPath;
+      } else {
+        console.error(
+          `Default image not found (status: ${testResponse.status})`
+        );
+        // Fall back to an external image
+        return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=500';
+      }
+    } catch (testError) {
+      console.error('Error testing default image:', testError);
+      // Fall back to an external image
+      return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=500';
+    }
   } catch (error) {
     console.error(
       `Error in getRecipeImage for ${recipe.title}:`,
       error
     );
-    // Return a fallback
-    return `defaultRecipeImage-${(index % 5) + 1}.jpg`;
+    return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=500';
   }
 }
 
