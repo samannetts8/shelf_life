@@ -139,7 +139,21 @@ input:checked + .slider:before {
   transform: translateX(24px);
 }
 
+/* .saveButton {
+  background-color: #10B981;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+} */
+
 .saveButton {
+  display: block; 
+  margin: 0 auto; 
   background-color: #10B981;
   color: white;
   border: none;
@@ -150,6 +164,7 @@ input:checked + .slider:before {
   cursor: pointer;
   transition: background-color 0.2s;
 }
+
 
 .saveButton:hover {
   background-color: #b2dcce;
