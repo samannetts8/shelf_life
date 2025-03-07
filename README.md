@@ -6,7 +6,7 @@
 
 **An app that helps track food expiry dates, cut waste, and prevent overbuying**
 
-**Live Demo:** https://shelf-life-dun.vercel.app/
+**Deployed link:** https://shelf-life-dun.vercel.app/
 
 ---
 
@@ -33,7 +33,7 @@ One-third of all food globally is wasted, with the UK discarding 9.52 million to
 
 ## Solution
 
-Our app helps reduce waste by keeping users informed on when their food will expire which also has the benefit of preventing users over-buying, thus reducing food waste.
+ShelfLife notifies users about upcoming expiry dates, categorises ingredients for easy tracking, and integrates AI-powered recipe suggestions to make the most of available food. This helps prevent waste, save money, and promote sustainable consumption.
 
 ## Tech Stack
 
@@ -108,25 +108,17 @@ npm run dev
 
 ## Challenges & Learnings
 
-- What did you and your team struggle with?
-- What skills did you improve?
+ **Key Takeaways:**
 
-Example:
-
-> Key Takeaways:
->
-> - Implementing **real-time chat** using Firebase was a challenge due to security concerns, but we learned about Firestore rules.
-> - Managing **user roles (landlords vs. tenants)** in the database helped us understand relational data modelling.
-
----
+- Connecting the **frontend to the backend** was challenging as Supabase was a new technology, but we gained a solid understanding of authentication and database integration.  
+- Ensuring all **features linked seamlessly** required troubleshooting API calls and state management, which helped us improve our debugging and problem-solving skills.  
+- Executing all of our **plans within just two coding days** pushed us to prioritise tasks efficiently, work collaboratively under pressure, and adapt quickly to challenges.  
 
 ## Future Improvements
 
-- What features would you add with more time?
-
-Example:
-
-- **Lease Agreement Templates** – Auto-generate lease agreements.
+- **Barcode Scanner Integration** – Scan food items to auto-log expiry dates and autofill receipts.  
+- **Smart Notifications** – Personalized reminders based on user preferences.  
+- **Food Donation Feature** – Suggest local food banks for items near expiry.  
 
 ---
 
