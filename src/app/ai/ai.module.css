@@ -199,3 +199,11 @@
   box-shadow: 0 2px 3px 2px #0000001a;
   margin-bottom: 1rem;
 }
+
+.generateButton:hover {
+  filter: brightness(103%);
+}
+
+.generateButton:active {
+  box-shadow: none;
+}
