@@ -1,4 +1,4 @@
-# SoC BC18: Final Hackathon project
+# SoC BC18: Final Hackathon Project
 
 ### ShelfLife
 
@@ -44,6 +44,7 @@ ShelfLife notifies users about upcoming expiry dates, categorises ingredients fo
 - CSS Modules - For styling
 - Animate.css - For animations
 - TypeScript - For type safety
+- Vercel v0 - Initial Bare-Bones Setup
 
   **Backend:**
 
@@ -112,7 +113,7 @@ npm run dev
 
 - Connecting the **frontend to the backend** was challenging as Supabase was a new technology, but we gained a solid understanding of authentication and database integration.  
 - Ensuring all **features linked seamlessly** required troubleshooting API calls and state management, which helped us improve our debugging and problem-solving skills.  
-- Executing all of our **plans within just two coding days** pushed us to prioritise tasks efficiently, work collaboratively under pressure, and adapt quickly to challenges.  
+- Executing all of our plans within just **two coding days** required an agile mindset, pushing us to prioritise tasks efficiently, work collaboratively under pressure, and adapt quickly to challenges as they arose. 
 
 ## Future Improvements
 
