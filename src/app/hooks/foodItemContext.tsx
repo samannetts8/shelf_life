@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
 import React, {
   createContext,
   useState,
   useContext,
   useEffect,
-  ReactNode
-} from 'react';
-import { FoodItemType } from '../types/food-item';
-import { foodItems as initialFoodItems } from '../data/food-items';
-import { FoodItem } from '../components/food-item';
+  ReactNode,
+} from "react";
+import { FoodItemType } from "../types/food-item";
+import { foodItems as initialFoodItems } from "../data/food-items";
+import { FoodItem } from "../components/food-item";
 
 interface FoodItemsContextType {
   foodItems: FoodItemType[];
@@ -21,7 +21,9 @@ interface FoodItemsContextType {
   markAsConsumed: (id: string) => Promise<void>;
 }
 
-const FoodItemsContext = createContext<FoodItemsContextType | undefined>(undefined);
+const FoodItemsContext = createContext<FoodItemsContextType | undefined>(
+  undefined
+);
 
 export function FoodItemsProvider({ children }: { children: ReactNode }) {
   const [foodItems, setFoodItems] = useState<FoodItemType[]>([]);
@@ -31,19 +33,21 @@ export function FoodItemsProvider({ children }: { children: ReactNode }) {
   const refreshItems = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/supabaseRoute');
+      const response = await fetch("/api/supabaseRoute");
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`API error (${response.status}): ${errorText}`);
-        throw new Error(`Failed to fetch data: ${response.status} ${errorText}`);
+        throw new Error(
+          `Failed to fetch data: ${response.status} ${errorText}`
+        );
       }
 
       const data = await response.json();
       console.log(`Received ${data.length} items from API`);
       setFoodItems(data);
     } catch (error) {
-      console.error('Error fetching food items:', error);
+      console.error("Error fetching food items:", error);
       setFoodItems(initialFoodItems);
     } finally {
       setLoading(false);
@@ -60,18 +64,18 @@ export function FoodItemsProvider({ children }: { children: ReactNode }) {
     try {
       // Update the database first
       const response = await fetch(`/api/supabaseRoute/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update database');
+        throw new Error("Failed to update database");
       }
 
       // Then update local state
       const updatedItems = foodItems.filter((item) => item.id !== id);
       setFoodItems(updatedItems);
     } catch (error) {
-      console.error('Error marking item as consumed:', error);
+      console.error("Error marking item as consumed:", error);
     }
   };
 
@@ -95,8 +99,11 @@ export function FoodItemsProvider({ children }: { children: ReactNode }) {
 
   const expiredItems = foodItems.filter((item) => {
     const expiryDate = new Date(item.expiry_date);
-    const today = new Date();
-    return expiryDate < today;
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    // Set to end of yesterday (23:59:59) to include all of yesterday
+    yesterday.setHours(23, 59, 59, 999);
+    return expiryDate <= yesterday;
   });
 
   return (
@@ -119,7 +126,7 @@ export function FoodItemsProvider({ children }: { children: ReactNode }) {
 export function useFoodItems() {
   const context = useContext(FoodItemsContext);
   if (context === undefined) {
-    throw new Error('useFoodItems must be used within a FoodItemsProvider');
+    throw new Error("useFoodItems must be used within a FoodItemsProvider");
   }
   return context;
 }

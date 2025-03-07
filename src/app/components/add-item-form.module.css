@@ -44,3 +44,23 @@
   background-color: #fff;
   font-size: 1rem;
 }
+
+.submitButton {
+  margin-top: 0.5rem;
+  width: 100%;
+  background-color: #047857; /* Green base color */
+  color: white;
+  padding: 0.75rem;
+  border-radius: 999px;
+  transition: background-color 0.2s ease;
+}
+
+.submitButton:hover {
+  background-color: #059669; /* Lighter green on hover */
+}
+
+.submitButton:disabled {
+  background-color: #065f46; /* Darker green when disabled */
+  cursor: not-allowed;
+  opacity: 0.7;
+}

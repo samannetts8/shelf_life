@@ -41,7 +41,7 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background-color: #10B981;
+  background-color: #10b981;
   color: white;
   display: flex;
   align-items: center;
@@ -115,7 +115,7 @@
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 34px;
 }
 
@@ -127,35 +127,23 @@
   left: 4px;
   bottom: 4px;
   background-color: white;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 50%;
 }
 
 input:checked + .slider {
-  background-color: #10B981;
+  background-color: #10b981;
 }
 
 input:checked + .slider:before {
   transform: translateX(24px);
 }
 
-/* .saveButton {
-  background-color: #10B981;
-  color: white;
-  border: none;
-  border-radius: 30px;
-  padding: 14px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-} */
-
 .saveButton {
-  display: block; 
-  margin: 0 auto; 
-  background-color: #10B981;
-  color: white;
+  display: block;
+  margin: 0.6rem auto;
+  background-color: #10b981;
+  color: rgb(230, 243, 230);
   border: none;
   border-radius: 30px;
   padding: 14px;
@@ -165,13 +153,12 @@ input:checked + .slider:before {
   transition: background-color 0.2s;
 }
 
-
 .saveButton:hover {
-  background-color: #b2dcce;
+  background-color: #10ac78;
 }
 
 .saveButton:disabled {
-  background-color: #a0a0a0;
+  background-color: #15926f;
   cursor: not-allowed;
 }
 
