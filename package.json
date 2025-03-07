@@ -23,7 +23,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.2",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
       "humanize-ms": "^1.2.1",
   "node-domexception": "^1.0.0",
   "openai": "^4.28.0"
