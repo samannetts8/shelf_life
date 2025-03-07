@@ -6,7 +6,7 @@
 
 **An app that helps track food expiry dates, cut waste, and prevent overbuying**
 
-**Demplyed link:** https://shelf-life-dun.vercel.app/
+**Deployed link:** https://shelf-life-dun.vercel.app/
 
 ---
 
